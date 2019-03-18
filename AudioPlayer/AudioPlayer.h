@@ -10,4 +10,5 @@ namespace AudioPlayer {
 	int PlayEffect(string file);
 	void PauseMusic();
 	void ResumeMusic();
+	void CleanUp();
 }
