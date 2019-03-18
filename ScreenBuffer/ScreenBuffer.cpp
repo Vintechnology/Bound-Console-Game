@@ -148,6 +148,13 @@ namespace ScreenBuffer {
 		}
 	}
 
+	void fillBuffer(char c, short color) {
+		for (int i = 0; i < WIDTH*HEIGHT; i++) {
+			_bufferScreen[i].Char.AsciiChar = c;
+			_bufferScreen[i].Attributes = color;
+		}
+	}
+
 	void drawLine(int x1, int y1, int x2, int y2, char c, short color) {
 		clip(x1, y1);
 		clip(x2, y2);
