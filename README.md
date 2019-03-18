@@ -14,11 +14,16 @@ Sau đó để có thể bắt đầu làm việc với file đó trong Visual S
 Đôi khi chúng ta cần ẩn vài file khỏi Visual Studio (có thể ta muốn tạo một hàm main mới để test chức năng gì đó). **Nhấn chuột phải** và file cần ẩn chọn **Remove** -> **Remove**. Visual Studio lúc này sẽ không compile file đó nữa và file đó cũng không bị xóa, bạn có thể add vào bằng cách ở trên.
 # Hướng dẫn cài đặt thư viện SDL và SDL_mixer trong Visual Studio
 Vì module Audio của game sẽ sử dụng thư viện SDL và SDL_mixer nên cần có một số cài đặt để module này có thể được sử dụng
-1. Tải về thư viện SDL và SDL_mixer tại https://www.libsdl.org/download-2.0.php và https://www.libsdl.org/projects/SDL_mixer/. Nên nhớ phiên bản download về là **Development Libraries**, nên tránh nhầm lẫn với phiên bản **Source code** hay **Runtime Binaries**.
+1. Tải về thư viện SDL và SDL_mixer tại: 
+* **Souce**: 
+  * SDL: https://www.libsdl.org/download-2.0.php  
+  * SDL_mixer: https://www.libsdl.org/projects/SDL_mixer/
+
+Nên nhớ phiên bản download về là **Development Libraries**, nên tránh nhầm lẫn với phiên bản **Source code** hay **Runtime Binaries**.
 
 1. Giải nén và đặt chúng ở nơi bạn có thể dễ truy cập tới sau này.
 
-1. Mở Visual Studio. Nhấn vào **Project** -> **<Tên Project>'s Properties -> **C/C++** -> **General** -> **Ađitional Include Directories (bên tay phải)** -> **Edit** và chọn đường dẫn tới tệp **Include** của 2 thư viện mà bạn đã giải nén.
+1. Mở Visual Studio. Nhấn vào **Project** -> **<Tên Project>'s Properties** -> **C/C++** -> **General** -> **Ađitional Include Directories (bên tay phải)** -> **Edit** và chọn đường dẫn tới tệp **Include** của 2 thư viện mà bạn đã giải nén.
 
 1. Vẫn trong cửa sổ đó, chọn thẻ **Linker (bên tay trái)** -> **Additional Library Directories** cũng chọn đường dẫn tới 2 thư viện như trên nhưng lần này thay vì tới tệp Include ta dẫn tới tệp **lib/x86**.
 
