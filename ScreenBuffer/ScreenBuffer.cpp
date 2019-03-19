@@ -155,26 +155,83 @@ namespace ScreenBuffer {
 		}
 	}
 
+	// Bresenham's Line Algorithms
 	void drawLine(int x1, int y1, int x2, int y2, char c, short color) {
 		clip(x1, y1);
 		clip(x2, y2);
-		float dx = x1 - x2;
-		float dy = y1 - y2;
 		
-		float steps;
-		if (abs(dx) > abs(dy))
-			steps = abs(dx);
-		else
-			steps = abs(dy);
+		int dx = x2 - x1;
+		int dy = y2 - y1;
 
-		float increaseX_perStep = dx / steps;
-		float increaseY_perStep = dy / steps;
+		if (dx == 0 && dy == 0)
+			return;
 
-		for (int step = 0; step <= steps; step++) {
-			float x = x2 + increaseX_perStep * step;
-			float y = y2 + increaseY_perStep * step;
-			draw(roundl(x), roundl(y), c, color);
+		bool negativeSlope = dx * dy < 0;
+
+		int abs_dx = abs(dx);
+		int abs_dy = abs(dy);
+
+		int x0, y0;
+
+		if (abs_dx >= abs_dy) {
+			if (dx < 0) {
+				x0 = x2;
+				y0 = y2;
+			}
+			else {
+				x0 = x1;
+				y0 = y1;
+			}
+			int decisionPoint = 2 * abs_dy - abs_dx;
+			
+			draw(x0, y0, c, color);
+			for (int k = 0; k < abs_dx; k++) {
+				if (decisionPoint < 0) {
+					draw(++x0, y0, c, color);
+					decisionPoint += 2 * abs_dy;
+				}
+				else {
+					if (!negativeSlope)
+						y0++;
+					else
+						y0--;
+					draw(++x0, y0, c, color);
+					decisionPoint += 2 * (abs_dy - abs_dx);
+				}
+			}
+
 		}
+		else {
+			if (dy < 0) {
+				x0 = x2;
+				y0 = y2;
+			}
+			else {
+				x0 = x1;
+				y0 = y1;
+			}
+
+			int decisionPoint = 2 * abs_dx - abs_dy;
+
+			draw(x0, y0, c, color);
+			for (int k = 0; k < abs_dy; k++) {
+				if (decisionPoint < 0) {
+					decisionPoint += 2 * abs_dx;
+				}
+				else {
+					if (!negativeSlope) {
+						x0++;
+					}
+					else {
+						x0--;
+					}
+					decisionPoint += 2 * (abs_dx - abs_dy);
+				}
+				draw(x0, ++y0, c, color);
+			}
+		}
+		
+		
 		
 	}
 
