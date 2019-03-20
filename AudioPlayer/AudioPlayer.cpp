@@ -8,7 +8,7 @@ namespace AudioPlayer {
 		Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
 		if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1)
 		{
-			cout << Mix_GetError();
+			cout << Mix_GetError();// Do something else
 		}
 	}
 
@@ -18,7 +18,7 @@ namespace AudioPlayer {
 		music = Mix_LoadMUS(file.c_str());
 		if (music == NULL)
 		{
-			cout << Mix_GetError();
+			cout << Mix_GetError();// Do something else
 			return 0;
 		}
 		Mix_PlayMusic(music, -1);
@@ -31,7 +31,7 @@ namespace AudioPlayer {
 		effect = Mix_LoadWAV(file.c_str());
 		if (effect == NULL)
 		{
-			cout << Mix_GetError();
+			cout << Mix_GetError();// do something else
 			return 0;
 		}
 

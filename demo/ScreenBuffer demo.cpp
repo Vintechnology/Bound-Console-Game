@@ -1,7 +1,7 @@
 #include <iostream>
 #include <windows.h>
-#include "ScreenBuffer/ScreenBuffer.h"
-#include "ScreenBuffer/Color.h"
+#include "../ScreenBuffer/ScreenBuffer.h"
+#include "../ScreenBuffer/Color.h"
 
 
 int main()
