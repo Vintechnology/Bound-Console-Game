@@ -28,6 +28,7 @@ Nên nhớ phiên bản download về là **Development Libraries**, nên tránh
 1. Vẫn trong cửa sổ đó, chọn thẻ **Linker (bên tay trái)** -> **Additional Library Directories** cũng chọn đường dẫn tới 2 thư viện như trên nhưng lần này thay vì tới tệp Include ta dẫn tới tệp **lib/x86**.
 
 1. Mở rộng thẻ **Linker** -> **Input** -> **Additional Dependencies** và nhập vào 3 dòng **SDL2.lib**, **SDL2main.lib**, **SDL2_mixer.lib**. 
+1. Nếu bạn bị lỗi "Entry point must be defined". Hãy vào mục **System** của thẻ **Linker**. Mục **SubSystem** và chọn **Console(/SUBSYSTEM:CONSOLE)**.
 
 1. Nhấn **OK** để lưu tại tất cả thay đổi.
 
