@@ -1,7 +1,7 @@
 #include <iostream>
 #include <chrono>
 #include <SDL_mixer.h>
-
+#include <SDL.h>
 #include "ScreenBuffer/ScreenBuffer.h"
 #include "ScreenBuffer/Color.h"
 #include "AudioPlayer/AudioPlayer.h"
@@ -48,7 +48,7 @@ void onGameUpdate(float elapsedTime);
 
 
 
-int main() {
+int main(int argc, char* argv[]) { 
 	Init();
 	Intro();
 	while (1) {
