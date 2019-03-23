@@ -19,9 +19,9 @@ const int GAME_HEIGHT = 78;
 const int BALL_RADIUS = 0;
 
 const int SPACE_WIDTH = 5;
-const int WALL_HEIGHT = 3;
+const int WALL_HEIGHT = 4;
 
-const int NUMBER_OF_WALLS = 1;// Replace this
+const int NUMBER_OF_WALLS = 3;// Replace this
 
 // === ENUM DECLARE ===
 
@@ -41,9 +41,9 @@ struct Wall {
 bool gameOver;
 int score;
 int bestScore;
-
+int SectionHeigth;
 Ball ball;
-Wall walls[NUMBER_OF_WALLS];
+Wall Obstacle[NUMBER_OF_WALLS];
 
 
 // === FUNCTION DECLARE ===
@@ -122,6 +122,13 @@ void ResetGame() {
 	ball.x = 1 / 2 * GAME_WIDTH;
 	ball.y = 1 / 3 * GAME_HEIGHT;
 	// @ThanhUy TODO: Init Walls
+	SectionHeight = ((float)GAME_HEIGHT / NUMBER_OF_WALLS + 1) + 5; 
+	for (int i = 0; i < 3; i++)
+	{
+		Obstacle[i].spaceX = rand() % (GAME_WIDTH - 10);
+		Obstacle[i].spaceY = (i + 1)*SectionHeight;
+	}
+	Obstacle[4].spaceY = 31 // 31 is just a number to make sure that Wall 4 won't show up in the screen until time.
 }
 
 // === HANDLE PLAY INPUT ===
@@ -132,11 +139,38 @@ void GameHandleInput() {
 // === PLAY LOGIC ===
 void GameLogic(float elapsedTime) {
 	// TODO: Update ball
-	// TODO: Update Walls
+	ObstacleLogic(elapsedTime);
 	// TODO: Check for collision, increase score or game over
 	// TODO: Update Game Camera
 }
+void ObstacleLogic(float fElapsedTime)
+{
+	//TODO: Clear the screen first. But i don't know if it affect other people code.
 
+	for (int i = 0; i < 3; i++)
+	{
+		if (Obstacle[i].spaceY <= 1)
+		{
+			Obstacle[4].spaceX = Obstacle[i].spaceX;
+			Obstacle[4].spaceY = Obstacle[i].spaceY;
+			Obstacle[i].spaceX = rand() % (GAME_WIDTH - 10);
+			Obstacle[i].spaceY = GAME_HEIGHT - 1;
+		}
+		//Buffer::fillRect(1, Obstacle[i].spaceY, GAME_WIDTH - SPACE_WIDTH - Obstacle[i].spaceX, Obstacle[i].spaceY + WALL_HEIGHT, L' ', BG_CYAN);
+		//Buffer::fillRect(GAME_WIDTH - Obstacle[i].spaceX, Obstacle[i].spaceY, GAME_WIDTH - 1, Obstacle[i].spaceY + WALL_HEIGHT, L' ', BG_CYAN);
+		Obstacle[i].spaceY -= 8.0f*fElapsedTime;
+
+		if (Obstacle[4].spaceY + WALL_HEIGHT >= 0 && Obstacle[4].spaceY != 31) //31 is declare in the Reset Game 
+		{
+			//Buffer::fillRect(1, 1, GAME_WIDTH - SPACE_WIDTH - Obstacle[4].spaceX, Obstacle[4].spaceY + WALL_HEIGHT, L' ', BG_BLUE);
+			//Buffer::fillRect(GAME_WIDTH - Obstacle[4].spaceX, 1, GAME_WIDTH - 1, Obstacle[4].spaceY + WALL_HEIGHT, L' ', BG_BLUE);
+			Obstacle[4].spaceY -= 6.0f*fElapsedTime;
+		}
+
+
+	}
+
+}
 // === PLAY DRAW ===
 void GameDraw() {
 
