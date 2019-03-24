@@ -53,7 +53,7 @@ float SectionHeight;
 
 // === FUNCTION DECLARE ===
 void Intro();
-void Menu();
+int Menu();
 void Init();
 void Depose();
 void ResetGame();
@@ -64,8 +64,7 @@ void onGameUpdate(float elapsedTime);
 int main(int argc, char* argv[]) {
 	Init();
 	Intro();
-	while (1) {
-		Menu();
+	while ( Menu() ) {
 		ResetGame();
 		auto t1 = std::chrono::system_clock::now();
 		auto t2 = t1;
@@ -110,7 +109,7 @@ void Intro() {
 }
 
 // === MENU ===
-void Menu() {
+int Menu() {
 
 }
 
