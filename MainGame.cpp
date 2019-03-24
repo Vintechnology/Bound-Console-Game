@@ -21,7 +21,7 @@ const int BALL_RADIUS = 0;
 const int SPACE_WIDTH = 5;
 const int WALL_HEIGHT = 4;
 
-const int NUMBER_OF_WALLS = 3;// Replace this
+const int NUMBER_OF_WALLS = 3;// to @ThanhUy: Suppose to be 4 ?
 
 // === ENUM DECLARE ===
 
@@ -44,6 +44,7 @@ int bestScore;
 int SectionHeigth;
 Ball ball;
 Wall Obstacle[NUMBER_OF_WALLS];
+float SectionHeight;
 
 
 // === FUNCTION DECLARE ===
@@ -122,13 +123,13 @@ void ResetGame() {
 	ball.x = 1 / 2 * GAME_WIDTH;
 	ball.y = 1 / 3 * GAME_HEIGHT;
 	// @ThanhUy TODO: Init Walls
-	SectionHeight = ((float)GAME_HEIGHT / NUMBER_OF_WALLS + 1) + 5; 
+	SectionHeight = ((float)GAME_HEIGHT / NUMBER_OF_WALLS + 1) + 5; // to @ThanhUy: I need you to add comment explaining for this 
 	for (int i = 0; i < 3; i++)
 	{
 		Obstacle[i].spaceX = rand() % (GAME_WIDTH - 10);
 		Obstacle[i].spaceY = (i + 1)*SectionHeight;
 	}
-	Obstacle[4].spaceY = 31 // 31 is just a number to make sure that Wall 4 won't show up in the screen until time.
+	Obstacle[4].spaceY = 31; // 31 is just a number to make sure that Wall 4 won't show up in the screen until time.
 }
 
 // === HANDLE PLAY INPUT ===
@@ -143,9 +144,11 @@ void GameLogic(float elapsedTime) {
 	// TODO: Check for collision, increase score or game over
 	// TODO: Update Game Camera
 }
+
+// to @ThanhUy: Please remove all code for drawing in your function. It should not be there
 void ObstacleLogic(float fElapsedTime)
 {
-	//TODO: Clear the screen first. But i don't know if it affect other people code.
+	//TODO: Clear the screen first. But i don't know if it affect other people code. --> to @Thanh Uy: Yes, it does. Beside, it's DRAWING's reponsibility
 
 	for (int i = 0; i < 3; i++)
 	{
