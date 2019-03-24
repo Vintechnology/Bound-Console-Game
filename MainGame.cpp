@@ -56,7 +56,7 @@ int bestScore;
 int SectionHeigth;
 Ball ball;
 Wall Obstacle[NUMBER_OF_WALLS];
-float SectionHeight;
+
 
 
 // === FUNCTION DECLARE ===
@@ -72,7 +72,7 @@ void onGameUpdate(float elapsedTime);
 int main(int argc, char* argv[]) {
 	Init();
 	Intro();
-	while ( 1 ) {
+	while (Menu()) {
 		ResetGame();
 		auto t1 = std::chrono::system_clock::now();
 		auto t2 = t1;
@@ -81,12 +81,10 @@ int main(int argc, char* argv[]) {
 			std::chrono::duration<float> elapsedTime = t2 - t1;
 			t1 = t2;
 			float fElapsedTime = elapsedTime.count();
-
 			onGameUpdate(fElapsedTime);
 			ScreenBuffer::drawToConsole();
 		}
 	}
-
 	Depose();
 	return 0;
 }
