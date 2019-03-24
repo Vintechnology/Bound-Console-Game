@@ -17,11 +17,14 @@ const int  GAME_WIDTH = 48;
 const int GAME_HEIGHT = 78;
 
 const int BALL_RADIUS = 0;
+const int BALL_HEIGHT = 3;
 
 const int SPACE_WIDTH = 5;
 const int WALL_HEIGHT = 4;
 
 const int NUMBER_OF_WALLS = 3;// to @ThanhUy: Suppose to be 4 ?
+
+const int BALL_LIMIT = 50;
 
 // === ENUM DECLARE ===
 
@@ -35,6 +38,7 @@ struct Ball {
 struct Wall {
 	float spaceX;
 	float spaceY;
+	bool passed = 0;
 };
 
 // === GLOBAL VARIABLES DECLARE===
@@ -174,6 +178,40 @@ void ObstacleLogic(float fElapsedTime)
 	}
 
 }
+
+void DrawLogic()
+{
+	if (ball.y > BALL_LIMIT*1.0)
+	{ 
+		for (int i = 0; i <= NUMBER_OF_WALLS; i++)
+		{
+			Obstacle[i].spaceY -= ball.y - BALL_LIMIT*1.0;
+			ball.y = BALL_LIMIT*1.0;
+		}
+	}
+}
+
+void Collision()
+{
+	for (int i = 0; i <= NUMBER_OF_WALLS; i++)
+	{
+		if (Obstacle[i].spaceY - ball.y <= BALL_HEIGHT/2 && Obstacle[i].spaceY - ball.y >= -WALL_HEIGHT)
+		{
+			if (!(ball.x - Obstacle[i].spaceX >= BALL_HEIGHT/2 && ball.x - Obstacle[i].spaceX <= SPACE_WIDTH - BALL_HEIGHT/2 - 1))
+				gameOver = 1;
+		}
+	}
+	if (ball.y < 1) gameOver = 1;
+	for (int i = 0; i <= NUMBER_OF_WALLS; i++)
+	{
+		if (ball.y == Obstacle[i].spaceY + 4 && Obstacle[i].passed == 0)
+		{
+			score++;
+			Obstacle[i].passed = 1;
+		}
+	}
+}
+
 // === PLAY DRAW ===
 void GameDraw() {
 
