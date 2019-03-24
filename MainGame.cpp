@@ -21,8 +21,7 @@ const int BALL_RADIUS = 0;
 const int SPACE_WIDTH = 5;
 const int WALL_HEIGHT = 4;
 
-const int NUMBER_OF_WALLS = 3;// to @ThanhUy: Suppose to be 4 ?
-
+const int NUMBER_OF_WALLS = 3;//Checked, wrong named.
 // === ENUM DECLARE ===
 
 // === STRUCT DECLARE ===
@@ -128,7 +127,7 @@ void ResetGame() {
 		Obstacle[i].spaceX = rand() % (GAME_WIDTH - 10);
 		Obstacle[i].spaceY = (i + 1)*SectionHeight;
 	}
-	Obstacle[4].spaceY = 31; // 31 is just a number to make sure that Wall 4 won't show up in the screen until time.
+	Obstacle[3].spaceY = 31; // 31 is just a number to make sure that Wall 4 won't show up in the screen until time.
 }
 
 // === HANDLE PLAY INPUT ===
@@ -153,8 +152,8 @@ void ObstacleLogic(float fElapsedTime)
 	{
 		if (Obstacle[i].spaceY <= 1)
 		{
-			Obstacle[4].spaceX = Obstacle[i].spaceX;
-			Obstacle[4].spaceY = Obstacle[i].spaceY;
+			Obstacle[3].spaceX = Obstacle[i].spaceX;
+			Obstacle[3].spaceY = Obstacle[i].spaceY;
 			Obstacle[i].spaceX = rand() % (GAME_WIDTH - 10);
 			Obstacle[i].spaceY = GAME_HEIGHT - 1;
 		}
@@ -162,11 +161,11 @@ void ObstacleLogic(float fElapsedTime)
 		//Buffer::fillRect(GAME_WIDTH - Obstacle[i].spaceX, Obstacle[i].spaceY, GAME_WIDTH - 1, Obstacle[i].spaceY + WALL_HEIGHT, L' ', BG_CYAN);
 		Obstacle[i].spaceY -= 8.0f*fElapsedTime;
 
-		if (Obstacle[4].spaceY + WALL_HEIGHT >= 0 && Obstacle[4].spaceY != 31) //31 is declare in the Reset Game 
+		if (Obstacle[3].spaceY + WALL_HEIGHT >= 0 && Obstacle[3].spaceY != 31) //31 is declare in the Reset Game 
 		{
-			//Buffer::fillRect(1, 1, GAME_WIDTH - SPACE_WIDTH - Obstacle[4].spaceX, Obstacle[4].spaceY + WALL_HEIGHT, L' ', BG_BLUE);
-			//Buffer::fillRect(GAME_WIDTH - Obstacle[4].spaceX, 1, GAME_WIDTH - 1, Obstacle[4].spaceY + WALL_HEIGHT, L' ', BG_BLUE);
-			Obstacle[4].spaceY -= 6.0f*fElapsedTime;
+			//Buffer::fillRect(1, 1, GAME_WIDTH - SPACE_WIDTH - Obstacle[3].spaceX, Obstacle[3].spaceY + WALL_HEIGHT, L' ', BG_BLUE);
+			//Buffer::fillRect(GAME_WIDTH - Obstacle[3].spaceX, 1, GAME_WIDTH - 1, Obstacle[3].spaceY + WALL_HEIGHT, L' ', BG_BLUE);
+			Obstacle[3].spaceY -= 6.0f*fElapsedTime;
 		}
 
 
