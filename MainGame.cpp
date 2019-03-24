@@ -24,7 +24,7 @@ const int BALL_HEIGHT = 3;
 const int SPACE_WIDTH = 5;
 const int WALL_HEIGHT = 4;
 
-const int NUMBER_OF_WALLS = 3;// to @ThanhUy: Suppose to be 4 ?
+const int NUMBER_OF_WALLS = 4;
 
 const int BALL_LIMIT = 50;
 
@@ -72,7 +72,7 @@ void onGameUpdate(float elapsedTime);
 int main(int argc, char* argv[]) {
 	Init();
 	Intro();
-	while ( Menu() ) {
+	while ( 1 ) {
 		ResetGame();
 		auto t1 = std::chrono::system_clock::now();
 		auto t2 = t1;
@@ -105,8 +105,8 @@ void Init() {
 	// TODO: Init AudioPLayer
 	// TODO: Load game asset
 	// Load Intro and Menu
-	LoadSprite(Logo_Outline, "Bound-Console-Game/GameData/Logo/Logo_Outline.dat");
-	LoadMenuData();
+	//LoadSprite(Logo_Outline, "Bound-Console-Game/GameData/Logo/Logo_Outline.dat");
+	//LoadMenuData();
 }
 
 /*
@@ -231,8 +231,7 @@ void ResetGame() {
 			Obstacle[i].spaceY = rand() % (GAME_WIDTH - SPACE_WIDTH);
 		}
 	}
-	Obstacle[3].spaceY = 31; // 31 is just a number to make sure that Wall 4 won't show up in the screen until time.
-}
+	}
 
 // === HANDLE PLAY INPUT ===
 void GameHandleInput() {
