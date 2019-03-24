@@ -125,8 +125,12 @@ void ResetGame() {
 	
 	for (int i = 0; i < 3; i++)
 	{
-		Obstacle[i].spaceX = rand() % (GAME_WIDTH - 10);
+		Obstacle[i].spaceX = rand() % (GAME_WIDTH - SPACE_WIDTH);
 		Obstacle[i].spaceY = (i + 1)*SectionHeight;
+		while (Obstacle[i].spaceX < 3) //@leader: I dont know if this needed to be here, but i dont see any necessary. Because it rand from 1 to 48 - SpaceWidth.
+		{
+			Obstacle[i].spaceY = rand() % (GAME_WIDTH - SPACE_WIDTH)
+		}
 	}
 	Obstacle[3].spaceY = 31; // 31 is just a number to make sure that Wall 4 won't show up in the screen until time.
 }
@@ -147,16 +151,20 @@ void GameLogic(float elapsedTime) {
 
 void ObstacleLogic(float fElapsedTime)
 {
+	srand(time(NULL));
 	for (int i = 0; i < 3; i++)
 	{
 		if (Obstacle[i].spaceY <= 1)
 		{
 			Obstacle[3].spaceX = Obstacle[i].spaceX;
 			Obstacle[3].spaceY = Obstacle[i].spaceY;
-			Obstacle[i].spaceX = rand() % (GAME_WIDTH - 10);
+			Obstacle[i].spaceX = rand() % (GAME_WIDTH - SPACE_WIDTH);
 			Obstacle[i].spaceY = GAME_HEIGHT - 1;
 		}
-		
+		while (Obstacle[i].spaceX < 3) // this is to make sure the XSpace will never lower than 2.
+		{
+			Obstacle[i].spaceY = rand() % (GAME_WIDTH - SPACE_WIDTH)
+		}
 		Obstacle[i].spaceY -= 8.0f*fElapsedTime;
 
 		if (Obstacle[3].spaceY + WALL_HEIGHT >= 0 && Obstacle[3].spaceY != 31) //31 is declare in the Reset Game 
