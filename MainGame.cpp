@@ -120,8 +120,9 @@ void ResetGame() {
 	gameOver = false;
 	ball.x = 1 / 2 * GAME_WIDTH;
 	ball.y = 1 / 3 * GAME_HEIGHT;
-	// @ThanhUy TODO: Init Walls
-	SectionHeight = ((float)GAME_HEIGHT / NUMBER_OF_WALLS + 1) + 5; // to @ThanhUy: I need you to add comment explaining for this 
+	//@Leader : Section Heigth is just to know where to put the Obstacle in the first place. So if you change the Game Height, it won't appeared in weird position.
+	SectionHeight = ((float)GAME_HEIGHT / NUMBER_OF_WALLS + 1) + 5; 
+	
 	for (int i = 0; i < 3; i++)
 	{
 		Obstacle[i].spaceX = rand() % (GAME_WIDTH - 10);
@@ -143,11 +144,9 @@ void GameLogic(float elapsedTime) {
 	// TODO: Update Game Camera
 }
 
-// to @ThanhUy: Please remove all code for drawing in your function. It should not be there
+
 void ObstacleLogic(float fElapsedTime)
 {
-	//TODO: Clear the screen first. But i don't know if it affect other people code. --> to @Thanh Uy: Yes, it does. Beside, it's DRAWING's reponsibility
-
 	for (int i = 0; i < 3; i++)
 	{
 		if (Obstacle[i].spaceY <= 1)
@@ -157,14 +156,12 @@ void ObstacleLogic(float fElapsedTime)
 			Obstacle[i].spaceX = rand() % (GAME_WIDTH - 10);
 			Obstacle[i].spaceY = GAME_HEIGHT - 1;
 		}
-		//Buffer::fillRect(1, Obstacle[i].spaceY, GAME_WIDTH - SPACE_WIDTH - Obstacle[i].spaceX, Obstacle[i].spaceY + WALL_HEIGHT, L' ', BG_CYAN);
-		//Buffer::fillRect(GAME_WIDTH - Obstacle[i].spaceX, Obstacle[i].spaceY, GAME_WIDTH - 1, Obstacle[i].spaceY + WALL_HEIGHT, L' ', BG_CYAN);
+		
 		Obstacle[i].spaceY -= 8.0f*fElapsedTime;
 
 		if (Obstacle[3].spaceY + WALL_HEIGHT >= 0 && Obstacle[3].spaceY != 31) //31 is declare in the Reset Game 
 		{
-			//Buffer::fillRect(1, 1, GAME_WIDTH - SPACE_WIDTH - Obstacle[3].spaceX, Obstacle[3].spaceY + WALL_HEIGHT, L' ', BG_BLUE);
-			//Buffer::fillRect(GAME_WIDTH - Obstacle[3].spaceX, 1, GAME_WIDTH - 1, Obstacle[3].spaceY + WALL_HEIGHT, L' ', BG_BLUE);
+			
 			Obstacle[3].spaceY -= 6.0f*fElapsedTime;
 		}
 
