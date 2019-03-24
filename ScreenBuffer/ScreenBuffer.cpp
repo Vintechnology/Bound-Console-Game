@@ -52,7 +52,7 @@ namespace ScreenBuffer {
 		cfi.FontFamily = FF_DONTCARE;
 		cfi.FontWeight = FW_NORMAL;
 
-		wcscpy_s(cfi.FaceName, L"Consolas");
+		wcscpy_s(cfi.FaceName, L"Terminal");
 		if(!SetCurrentConsoleFontEx(_hConsoleOut, false, &cfi))
 			Error("Font size is invalid");
 
