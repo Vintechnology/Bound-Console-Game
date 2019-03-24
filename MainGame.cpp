@@ -17,12 +17,19 @@ const int  GAME_WIDTH = 48;
 const int GAME_HEIGHT = 78;
 
 const int BALL_RADIUS = 0;
+const int BALL_HEIGHT = 3;
 
 const int SPACE_WIDTH = 5;
 const int WALL_HEIGHT = 4;
 
+<<<<<<< HEAD
 const int NUMBER_OF_WALLS = 3;// to @ThanhUy: Suppose to be 4 ?
 
+const int BALL_LIMIT = 50;
+
+=======
+const int NUMBER_OF_WALLS = 3;//Checked, wrong named.
+>>>>>>> 15e64b796238ca8b96d846aa233fb463828c9a76
 // === ENUM DECLARE ===
 
 // === STRUCT DECLARE ===
@@ -35,6 +42,7 @@ struct Ball {
 struct Wall {
 	float spaceX;
 	float spaceY;
+	bool passed = 0;
 };
 
 // === GLOBAL VARIABLES DECLARE===
@@ -121,14 +129,19 @@ void ResetGame() {
 	gameOver = false;
 	ball.x = 1 / 2 * GAME_WIDTH;
 	ball.y = 1 / 3 * GAME_HEIGHT;
-	// @ThanhUy TODO: Init Walls
-	SectionHeight = ((float)GAME_HEIGHT / NUMBER_OF_WALLS + 1) + 5; // to @ThanhUy: I need you to add comment explaining for this 
+	//@Leader : Section Heigth is just to know where to put the Obstacle in the first place. So if you change the Game Height, it won't appeared in weird position.
+	SectionHeight = ((float)GAME_HEIGHT / NUMBER_OF_WALLS + 1) + 5; 
+	
 	for (int i = 0; i < 3; i++)
 	{
-		Obstacle[i].spaceX = rand() % (GAME_WIDTH - 10);
+		Obstacle[i].spaceX = rand() % (GAME_WIDTH - SPACE_WIDTH);
 		Obstacle[i].spaceY = (i + 1)*SectionHeight;
+		while (Obstacle[i].spaceX < 3) //@leader: I dont know if this needed to be here, but i dont see any necessary. Because it rand from 1 to 48 - SpaceWidth.
+		{
+			Obstacle[i].spaceY = rand() % (GAME_WIDTH - SPACE_WIDTH)
+		}
 	}
-	Obstacle[4].spaceY = 31; // 31 is just a number to make sure that Wall 4 won't show up in the screen until time.
+	Obstacle[3].spaceY = 31; // 31 is just a number to make sure that Wall 4 won't show up in the screen until time.
 }
 
 // === HANDLE PLAY INPUT ===
@@ -146,35 +159,69 @@ void GameLogic(float elapsedTime) {
 	// TODO: Update Game Camera
 }
 
-// to @ThanhUy: Please remove all code for drawing in your function. It should not be there
+
 void ObstacleLogic(float fElapsedTime)
 {
-	//TODO: Clear the screen first. But i don't know if it affect other people code. --> to @Thanh Uy: Yes, it does. Beside, it's DRAWING's reponsibility
-
+	srand(time(NULL));
 	for (int i = 0; i < 3; i++)
 	{
 		if (Obstacle[i].spaceY <= 1)
 		{
-			Obstacle[4].spaceX = Obstacle[i].spaceX;
-			Obstacle[4].spaceY = Obstacle[i].spaceY;
-			Obstacle[i].spaceX = rand() % (GAME_WIDTH - 10);
+			Obstacle[3].spaceX = Obstacle[i].spaceX;
+			Obstacle[3].spaceY = Obstacle[i].spaceY;
+			Obstacle[i].spaceX = rand() % (GAME_WIDTH - SPACE_WIDTH);
 			Obstacle[i].spaceY = GAME_HEIGHT - 1;
 		}
-		//Buffer::fillRect(1, Obstacle[i].spaceY, GAME_WIDTH - SPACE_WIDTH - Obstacle[i].spaceX, Obstacle[i].spaceY + WALL_HEIGHT, L' ', BG_CYAN);
-		//Buffer::fillRect(GAME_WIDTH - Obstacle[i].spaceX, Obstacle[i].spaceY, GAME_WIDTH - 1, Obstacle[i].spaceY + WALL_HEIGHT, L' ', BG_CYAN);
+		while (Obstacle[i].spaceX < 3) // this is to make sure the XSpace will never lower than 2.
+		{
+			Obstacle[i].spaceY = rand() % (GAME_WIDTH - SPACE_WIDTH)
+		}
 		Obstacle[i].spaceY -= 8.0f*fElapsedTime;
 
-		if (Obstacle[4].spaceY + WALL_HEIGHT >= 0 && Obstacle[4].spaceY != 31) //31 is declare in the Reset Game 
+		if (Obstacle[3].spaceY + WALL_HEIGHT >= 0 && Obstacle[3].spaceY != 31) //31 is declare in the Reset Game 
 		{
-			//Buffer::fillRect(1, 1, GAME_WIDTH - SPACE_WIDTH - Obstacle[4].spaceX, Obstacle[4].spaceY + WALL_HEIGHT, L' ', BG_BLUE);
-			//Buffer::fillRect(GAME_WIDTH - Obstacle[4].spaceX, 1, GAME_WIDTH - 1, Obstacle[4].spaceY + WALL_HEIGHT, L' ', BG_BLUE);
-			Obstacle[4].spaceY -= 6.0f*fElapsedTime;
+			
+			Obstacle[3].spaceY -= 6.0f*fElapsedTime;
 		}
 
 
 	}
 
 }
+
+void DrawLogic()
+{
+	if (ball.y > BALL_LIMIT*1.0)
+	{ 
+		for (int i = 0; i <= NUMBER_OF_WALLS; i++)
+		{
+			Obstacle[i].spaceY -= ball.y - BALL_LIMIT*1.0;
+			ball.y = BALL_LIMIT*1.0;
+		}
+	}
+}
+
+void Collision()
+{
+	for (int i = 0; i <= NUMBER_OF_WALLS; i++)
+	{
+		if (Obstacle[i].spaceY - ball.y <= BALL_HEIGHT/2 && Obstacle[i].spaceY - ball.y >= -WALL_HEIGHT)
+		{
+			if (!(ball.x - Obstacle[i].spaceX >= BALL_HEIGHT/2 && ball.x - Obstacle[i].spaceX <= SPACE_WIDTH - BALL_HEIGHT/2 - 1))
+				gameOver = 1;
+		}
+	}
+	if (ball.y < 1) gameOver = 1;
+	for (int i = 0; i <= NUMBER_OF_WALLS; i++)
+	{
+		if (ball.y == Obstacle[i].spaceY + 4 && Obstacle[i].passed == 0)
+		{
+			score++;
+			Obstacle[i].passed = 1;
+		}
+	}
+}
+
 // === PLAY DRAW ===
 void GameDraw() {
 	// TODO: Add a padding variables. Too many mysterious numbers
