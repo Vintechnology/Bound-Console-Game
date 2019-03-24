@@ -106,7 +106,7 @@ void Intro() {
 
 // === MENU ===
 int Menu() {
-
+	return 1;
 }
 
 
@@ -137,6 +137,8 @@ void GameHandleInput() {
 }
 
 // === PLAY LOGIC ===
+void ObstacleLogic(float fElapsedTime);
+
 void GameLogic(float elapsedTime) {
 	// TODO: Update ball
 	ObstacleLogic(elapsedTime);
@@ -175,7 +177,24 @@ void ObstacleLogic(float fElapsedTime)
 }
 // === PLAY DRAW ===
 void GameDraw() {
+	// TODO: Add a padding variables. Too many mysterious numbers
+	ScreenBuffer::fillBuffer(' ');
 
+	ScreenBuffer::drawCircle(ball.x + 0.5f, ball.y + 0.5f, BALL_RADIUS, ' ', Color::BG_RED);
+	for (int i = 0; i < NUMBER_OF_WALLS; i++) {
+		int drawSpaceX = Obstacle[i].spaceX + 0.5f;
+		int drawSpaceY = Obstacle[i].spaceY + 0.5f;
+		ScreenBuffer::fillRect(1, drawSpaceY, drawSpaceX - 1, drawSpaceY + WALL_HEIGHT - 1, ' ', Color::BG_DARK_GREY); // padding is 1 because the outline
+		ScreenBuffer::fillRect(drawSpaceX + SPACE_WIDTH, drawSpaceY, GAME_WIDTH, drawSpaceY + WALL_HEIGHT - 1, ' ', Color::BG_DARK_GREY);
+	}
+
+
+	ScreenBuffer::drawLine(0, 0, SCREEN_WIDTH - 1, 0, ' ', Color::BG_WHITE);
+	ScreenBuffer::drawLine(0, 0, 0, SCREEN_HEIGHT - 1, ' ', Color::BG_WHITE);
+	ScreenBuffer::drawLine(0, SCREEN_HEIGHT - 1, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1, ' ', Color::BG_WHITE);
+	ScreenBuffer::drawLine(SCREEN_WIDTH - 1, 0, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1, ' ', Color::BG_WHITE);
+
+	ScreenBuffer::drawLine(GAME_WIDTH + 2, 0, GAME_WIDTH + 2, SCREEN_HEIGHT - 1, ' ', Color::BG_WHITE);
 }
 
 /*
