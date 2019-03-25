@@ -88,6 +88,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	Depose();
+	// TODO: Close Window
 	return 0;
 }
 
