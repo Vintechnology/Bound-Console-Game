@@ -346,10 +346,8 @@ void DrawLogic()
 	if (ball.y > BALL_LIMIT*1.0f)
 	{ 
 		for (int i = 0; i < NUMBER_OF_WALLS; i++)
-		{
 			Obstacle[i].spaceY -= ball.y - BALL_LIMIT*1.0f;
 			ball.y = BALL_LIMIT*1.0f;
-		}
 	}
 }
 
