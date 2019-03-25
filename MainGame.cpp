@@ -24,7 +24,7 @@ const int BALL_HEIGHT = 3;
 const int SPACE_WIDTH = 5;
 const int WALL_HEIGHT = 4;
 
-const int NUMBER_OF_WALLS = 3;// to @ThanhUy: Suppose to be 4 ?
+const int NUMBER_OF_WALLS = 4;
 
 const int BALL_LIMIT = 50;
 
@@ -34,12 +34,22 @@ const int KEY_C = 0x43;
 const int KEY_H = 0x48;
 const int KEY_E = 0x45;
 
+// === Declare for Input ===
+int next_space=0;
+int pre_space=0;
+int spacePressed;
+int leftPressed;
+int rightPressed;
+
 // === ENUM DECLARE ===
 
 // === STRUCT DECLARE ===
 struct Ball {
 	float x;
 	float y;
+	float a=0.0f;	//Acceleration
+	float g=10.0f;	//Gravity
+	float v=0.0f;	//Velocity
 	// Add something if you need
 };
 
@@ -72,7 +82,7 @@ void onGameUpdate(float elapsedTime);
 int main(int argc, char* argv[]) {
 	Init();
 	Intro();
-	while ( Menu() ) {
+	while ( 1 ) {
 		ResetGame();
 		auto t1 = std::chrono::system_clock::now();
 		auto t2 = t1;
@@ -106,8 +116,8 @@ void Init() {
 	// TODO: Init AudioPLayer
 	// TODO: Load game asset
 	// Load Intro and Menu
-	LoadSprite(Logo_Outline, "Bound-Console-Game/GameData/Logo/Logo_Outline.dat");
-	LoadMenuData();
+	//LoadSprite(Logo_Outline, "Bound-Console-Game/GameData/Logo/Logo_Outline.dat");
+	//LoadMenuData();
 }
 
 /*
@@ -232,22 +242,42 @@ void ResetGame() {
 			Obstacle[i].spaceY = rand() % (GAME_WIDTH - SPACE_WIDTH);
 		}
 	}
-	Obstacle[3].spaceY = 31; // 31 is just a number to make sure that Wall 4 won't show up in the screen until time.
-}
+	}
 
 // === HANDLE PLAY INPUT ===
 void GameHandleInput() {
+	leftPressed=0;
+	rightPressed=0;
+	if(GetAsyncKeyState(VK_SPACE)&0x8000)
+	{
+		next_space=GetAsyncKeyState(VK_SPACE)&0x8000;
+		if(next_space&&(!pre_space))
+			spacePressed=1;
+		
+		if(next_space&&pre_space)
+			spacePressed=0;
+		
+		if(!next_space)
+			spacePressed=0;
+	}
 
+	if(GetAsyncKeyState(VK_LEFT)&0x8000)
+		leftPressed=1;
+
+	if(GetAsyncKeyState(VK_RIGHT)&0x8000)
+		rightPressed=1;
 }
 
 // === PLAY LOGIC ===
 void ObstacleLogic(float fElapsedTime);
+void controlBall(float elapsedTime);
 
 void GameLogic(float elapsedTime) {
 	// TODO: Update ball
 	ObstacleLogic(elapsedTime);
 	// TODO: Check for collision, increase score or game over
 	// TODO: Update Game Camera
+	controlBall(float elapsedTime);
 }
 
 
@@ -278,6 +308,31 @@ void ObstacleLogic(float fElapsedTime)
 
 	}
 
+}
+
+void controlBall(float elapsedTime)
+{
+	if(spacePressed && (ball.v>=ball.g/10.0f))
+	{
+		ball.a=0.0f;
+		ball.v=-ball.g/4.0f;
+	}
+	else
+		ball.a+=ball.g*elapsedTime;
+
+
+	if(ball.a>ball.g)
+		ball.a=ball.g;
+
+	ball.v+=ball.a*elapsedTime;
+	ball.y+=ball.v*elapsedTime;
+
+
+	if(leftPressed)
+		ball.x--;
+
+	if(rightPressed)
+		ball.x++;
 }
 
 void DrawLogic()
