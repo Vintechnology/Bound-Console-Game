@@ -355,7 +355,7 @@ void Collision()
 {
 	for (int i = 0; i < NUMBER_OF_WALLS; i++)
 	{
-		if (Obstacle[i].spaceY - ball.y <= BALL_HEIGHT/2 && Obstacle[i].spaceY - ball.y >= -WALL_HEIGHT)
+		if (Obstacle[i].spaceY - ball.y <= BALL_HEIGHT/2 && Obstacle[i].spaceY - ball.y >= -WALL_HEIGHT - BALL_HEIGHT/2 + 1)
 		{
 			if (!(ball.x - Obstacle[i].spaceX >= BALL_HEIGHT/2 && ball.x - Obstacle[i].spaceX <= SPACE_WIDTH - BALL_HEIGHT/2 - 1))
 				gameOver = 1;
