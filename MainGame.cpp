@@ -47,7 +47,6 @@ int rightPressed;
 struct Ball {
 	float x;
 	float y;
-	float a=0.0f;	//Acceleration
 	float g=10.0f;	//Gravity
 	float v=0.0f;	//Velocity
 	// Add something if you need
@@ -254,18 +253,15 @@ void ResetGame() {
 void GameHandleInput() {
 	leftPressed=0;
 	rightPressed=0;
-	if(GetAsyncKeyState(VK_SPACE)&0x8000)
-	{
-		next_space=GetAsyncKeyState(VK_SPACE)&0x8000;
-		if(next_space&&(!pre_space))
-			spacePressed=1;
-		
-		if(next_space&&pre_space)
-			spacePressed=0;
-		
-		if(!next_space)
-			spacePressed=0;
-	}
+
+	next_space=GetAsyncKeyState(VK_SPACE)&0x8000;
+	if(next_space&&(!pre_space))
+		spacePressed=1;	
+	if(next_space&&pre_space)
+		spacePressed=0;	
+	if(!next_space)
+		spacePressed=0;
+	pre_space=next_space;
 
 	if(GetAsyncKeyState(VK_LEFT)&0x8000)
 		leftPressed=1;
@@ -318,27 +314,16 @@ void ObstacleLogic(float fElapsedTime)
 
 void controlBall(float elapsedTime)
 {
-	if(spacePressed && (ball.v>=ball.g/10.0f))
-	{
-		ball.a=0.0f;
-		ball.v=-ball.g/4.0f;
-	}
-	else
-		ball.a+=ball.g*elapsedTime;
-
-
-	if(ball.a>ball.g)
-		ball.a=ball.g;
-
-	ball.v+=ball.a*elapsedTime;
+	if(spacePressed)
+		ball.v=-ball.g/2.0f;
 	ball.y+=ball.v*elapsedTime;
-
+	ball.v+=ball.g*elapsedTime;
 
 	if(leftPressed)
-		ball.x--;
+		ball.x-=10*elapsedTime;
 
 	if(rightPressed)
-		ball.x++;
+		ball.x+=10*elapsedTime;
 }
 
 void DrawLogic()
