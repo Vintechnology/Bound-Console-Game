@@ -346,10 +346,15 @@ void DrawLogic()
 	if (ball.y > BALL_LIMIT*1.0f)
 	{ 
 		for (int i = 0; i < NUMBER_OF_WALLS; i++)
+<<<<<<< HEAD
 		
 			Obstacle[i].spaceY -= ball.y - BALL_LIMIT*1.0f;
 			ball.y = BALL_LIMIT*1.0f;
 		
+=======
+			Obstacle[i].spaceY -= ball.y - BALL_LIMIT*1.0f;
+			ball.y = BALL_LIMIT*1.0f;
+>>>>>>> 0c80e6915262399aaa706d94c8a201cb57363e0b
 	}
 }
 
@@ -357,7 +362,7 @@ void Collision()
 {
 	for (int i = 0; i < NUMBER_OF_WALLS; i++)
 	{
-		if (Obstacle[i].spaceY - ball.y <= BALL_HEIGHT/2 && Obstacle[i].spaceY - ball.y >= -WALL_HEIGHT)
+		if (Obstacle[i].spaceY - ball.y <= BALL_HEIGHT/2 && Obstacle[i].spaceY - ball.y >= -WALL_HEIGHT - BALL_HEIGHT/2 + 1)
 		{
 			if (!(ball.x - Obstacle[i].spaceX >= BALL_HEIGHT/2 && ball.x - Obstacle[i].spaceX <= SPACE_WIDTH - BALL_HEIGHT/2 - 1))
 				gameOver = 1;
