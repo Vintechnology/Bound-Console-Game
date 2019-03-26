@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <conio.h>
 #include <chrono>
 #include <SDL_mixer.h>
@@ -18,7 +18,7 @@ const int FONT_HEIGHT = 8;
 const int  GAME_WIDTH = 48;
 const int GAME_HEIGHT = 78;
 
-const int BALL_RADIUS = 0;
+const int BALL_RADIUS = 1;
 const int BALL_HEIGHT = 3;
 
 const int SPACE_WIDTH = 5;
@@ -34,12 +34,22 @@ const int KEY_C = 0x43;
 const int KEY_H = 0x48;
 const int KEY_E = 0x45;
 
+// === Declare for Input ===
+int next_space=0;
+int pre_space=0;
+int spacePressed;
+int leftPressed;
+int rightPressed;
+
 // === ENUM DECLARE ===
 
 // === STRUCT DECLARE ===
 struct Ball {
 	float x;
 	float y;
+	float a=0.0f;	//Acceleration
+	float g=10.0f;	//Gravity
+	float v=0.0f;	//Velocity
 	// Add something if you need
 };
 
@@ -72,7 +82,9 @@ void onGameUpdate(float elapsedTime);
 int main(int argc, char* argv[]) {
 	Init();
 	Intro();
-	while (Menu()) {
+
+	while ( Menu() ) {
+
 		ResetGame();
 		auto t1 = std::chrono::system_clock::now();
 		auto t2 = t1;
@@ -86,6 +98,7 @@ int main(int argc, char* argv[]) {
 		}
 	}
 	Depose();
+	// TODO: Close Window
 	return 0;
 }
 
@@ -103,8 +116,8 @@ void Init() {
 	// TODO: Init AudioPLayer
 	// TODO: Load game asset
 	// Load Intro and Menu
-	//LoadSprite(Logo_Outline, "Bound-Console-Game/GameData/Logo/Logo_Outline.dat");
-	//LoadMenuData();
+	LoadSprite(Logo_Outline, "Bound-Console-Game/GameData/Logo/Logo_Outline.dat");
+	LoadMenuData();
 }
 
 /*
@@ -186,17 +199,21 @@ int Menu() {
 		case KEY_E + 32:
 		case KEY_E:
 			return 0;
+
 		case KEY_P + 32:
 		case KEY_P:
 			return 1;
+
 		case KEY_O + 32:
 		case KEY_O:
 			Options();
 			break;
+
 		case KEY_C + 32:
 		case KEY_C:
 			Credits();
 			break;
+
 		case KEY_H + 32:
 		case KEY_H:
 			Help();
@@ -215,35 +232,59 @@ int Menu() {
 void ResetGame() {
 	// Initialize global variables
 	gameOver = false;
-	ball.x = 1 / 2 * GAME_WIDTH;
-	ball.y = 1 / 3 * GAME_HEIGHT;
-	//@Leader : Section Heigth is just to know where to put the Obstacle in the first place. So if you change the Game Height, it won't appeared in weird position.
-	SectionHeight = ((float)GAME_HEIGHT / NUMBER_OF_WALLS + 1) + 5; 
+	ball.x = 1 / 2.0f * GAME_WIDTH;
+	ball.y = 1 / 3.0f * GAME_HEIGHT;
+
+	//Section Heigth is just to know where to put the Obstacle in the first place. So if you change the Game Height, it won't appeared in weird position.
+	SectionHeigth = ((float)GAME_HEIGHT / NUMBER_OF_WALLS + 1) + 5;
 	
 	for (int i = 0; i < 3; i++)
 	{
 		Obstacle[i].spaceX = rand() % (GAME_WIDTH - SPACE_WIDTH);
-		Obstacle[i].spaceY = (i + 1)*SectionHeight;
-		while (Obstacle[i].spaceX < 3) //@leader: I dont know if this needed to be here, but i dont see any necessary. Because it rand from 1 to 48 - SpaceWidth.
+		Obstacle[i].spaceY = (i + 1)*SectionHeigth;
+		while (Obstacle[i].spaceX < 3)
 		{
-			Obstacle[i].spaceY = rand() % (GAME_WIDTH - SPACE_WIDTH);
+			Obstacle[i].spaceX = rand() % (GAME_WIDTH - SPACE_WIDTH);
 		}
 	}
+	Obstacle[3].spaceY = -15;
 	}
 
 // === HANDLE PLAY INPUT ===
 void GameHandleInput() {
+	leftPressed=0;
+	rightPressed=0;
+	if(GetAsyncKeyState(VK_SPACE)&0x8000)
+	{
+		next_space=GetAsyncKeyState(VK_SPACE)&0x8000;
+		if(next_space&&(!pre_space))
+			spacePressed=1;
+		
+		if(next_space&&pre_space)
+			spacePressed=0;
+		
+		if(!next_space)
+			spacePressed=0;
+	}
 
+	if(GetAsyncKeyState(VK_LEFT)&0x8000)
+		leftPressed=1;
+
+	if(GetAsyncKeyState(VK_RIGHT)&0x8000)
+		rightPressed=1;
 }
 
 // === PLAY LOGIC ===
 void ObstacleLogic(float fElapsedTime);
+void controlBall(float elapsedTime); 
+void Collision();
+void DrawLogic();
 
 void GameLogic(float elapsedTime) {
-	// TODO: Update ball
+	controlBall(elapsedTime); //@ThanhViet: Logic Error
 	ObstacleLogic(elapsedTime);
-	// TODO: Check for collision, increase score or game over
-	// TODO: Update Game Camera
+	//Collision(); // hide for the purpose of seeing bug
+	DrawLogic();
 }
 
 
@@ -257,34 +298,58 @@ void ObstacleLogic(float fElapsedTime)
 			Obstacle[3].spaceX = Obstacle[i].spaceX;
 			Obstacle[3].spaceY = Obstacle[i].spaceY;
 			Obstacle[i].spaceX = rand() % (GAME_WIDTH - SPACE_WIDTH);
-			Obstacle[i].spaceY = GAME_HEIGHT - 1;
+			Obstacle[i].spaceY = GAME_HEIGHT - 1 + Obstacle[3].spaceY;
 		}
-		while (Obstacle[i].spaceX < 3) // this is to make sure the XSpace will never lower than 2.
+		while (Obstacle[i].spaceX < 3)
 		{
-			Obstacle[i].spaceY = rand() % (GAME_WIDTH - SPACE_WIDTH);
+			Obstacle[i].spaceX = rand() % (GAME_WIDTH - SPACE_WIDTH);
 		}
 		Obstacle[i].spaceY -= 8.0f*fElapsedTime;
 
-		if (Obstacle[3].spaceY + WALL_HEIGHT >= 0 && Obstacle[3].spaceY != 31) //31 is declare in the Reset Game 
-		{
+	
 			
 			Obstacle[3].spaceY -= 6.0f*fElapsedTime;
-		}
+		
 
 
 	}
 
 }
 
+void controlBall(float elapsedTime)
+{
+	if(spacePressed && (ball.v>=ball.g/10.0f))
+	{
+		ball.a=0.0f;
+		ball.v=-ball.g/4.0f;
+	}
+	else
+		ball.a+=ball.g*elapsedTime;
+
+
+	if(ball.a>ball.g)
+		ball.a=ball.g;
+
+	ball.v+=ball.a*elapsedTime;
+	ball.y+=ball.v*elapsedTime;
+
+
+	if(leftPressed)
+		ball.x--;
+
+	if(rightPressed)
+		ball.x++;
+}
+
 void DrawLogic()
 {
-	if (ball.y > BALL_LIMIT*1.0)
+	if (ball.y > BALL_LIMIT*1.0f)
 	{ 
 		for (int i = 0; i < NUMBER_OF_WALLS; i++)
-		{
-			Obstacle[i].spaceY -= ball.y - BALL_LIMIT*1.0;
-			ball.y = BALL_LIMIT*1.0;
-		}
+		
+			Obstacle[i].spaceY -= ball.y - BALL_LIMIT*1.0f;
+			ball.y = BALL_LIMIT*1.0f;
+		
 	}
 }
 
@@ -322,7 +387,7 @@ void drawHUD() {
 
 void drawStage(int originX, int originY, int maxX, int maxY) {
 
-	ScreenBuffer::drawCircle(originX + ball.x + 0.5f, originY + ball.y + 0.5f, BALL_RADIUS, ' ', Color::BG_RED);
+	ScreenBuffer::fillRect(originX + ball.x-BALL_RADIUS + 0.5f, originY + ball.y-BALL_RADIUS + 0.5f, originX + ball.x + BALL_RADIUS + 0.5f, originY + ball.y + BALL_RADIUS + 0.5f,' ', Color::BG_RED);
 	for (int i = 0; i < NUMBER_OF_WALLS; i++) {
 		int drawSpaceX = Obstacle[i].spaceX + 0.5f;
 		int drawSpaceY = Obstacle[i].spaceY + 0.5f;
