@@ -34,6 +34,8 @@ const int KEY_C = 0x43;
 const int KEY_H = 0x48;
 const int KEY_E = 0x45;
 
+const float g=30.0f;	//Gravity
+
 // === Declare for Input ===
 int next_space=0;
 int pre_space=0;
@@ -47,7 +49,6 @@ int rightPressed;
 struct Ball {
 	float x;
 	float y;
-	float g=10.0f;	//Gravity |  @ThanhViet: set g as a constant outside struct will be more logical
 	float v=0.0f;	//Velocity
 	// Add something if you need
 };
@@ -277,7 +278,7 @@ void Collision();
 void DrawLogic();
 
 void GameLogic(float elapsedTime) {
-	controlBall(elapsedTime); //@ThanhViet: Logic Error
+	controlBall(elapsedTime);
 	ObstacleLogic(elapsedTime);
 	//Collision(); // hide for the purpose of seeing bug
 	DrawLogic();
@@ -312,18 +313,18 @@ void ObstacleLogic(float fElapsedTime)// @ThanhUy: Algorithms is too ambigous. F
 
 }
 
-void controlBall(float elapsedTime) // @ThanhViet: The ball jump too short and move to left and right so quick. You will need to update this
+void controlBall(float elapsedTime)
 {
 	if(spacePressed)
-		ball.v=-ball.g/2.0f;
+		ball.v=-g/1.3f;
 	ball.y+=ball.v*elapsedTime;
-	ball.v+=ball.g*elapsedTime;
+	ball.v+=g*elapsedTime;
 
 	if(leftPressed)
-		ball.x-=10*elapsedTime;
+		ball.x-=5*elapsedTime;
 
 	if(rightPressed)
-		ball.x+=10*elapsedTime;
+		ball.x+=5*elapsedTime;
 }
 
 void DrawLogic()// @GiaVinh: Clean your code
