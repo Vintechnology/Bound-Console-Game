@@ -2,15 +2,11 @@
 #include <fstream>
 #include "../ScreenBuffer/ScreenBuffer.h"
 
-CHAR_INFO SIndx(Sprite &sprite, int x, int y)
-{
-	return sprite.C[y*sprite.W + x];
-}
-
 void LoadSprite(Sprite &sprite, std::string path)
 {
 	std::ifstream input(path);
 	input >> sprite.H >> sprite.W;
+	sprite.C = new _CHAR_INFO[sprite.H*sprite.W];
 	int Char;
 	for (int i = 0; i < sprite.H*sprite.W; i++)
 	{
@@ -28,4 +24,9 @@ void DrawSprite(Sprite & sprite, int x, int y)
 		for (int j = 0; j < sprite.H; j++)
 			if (sprite.C[j*sprite.W + i].Char.AsciiChar != 0)
 			ScreenBuffer::draw(i + x, j + y, sprite.C[j*sprite.W + i].Char.AsciiChar, sprite.C[j*sprite.W + i].Attributes);
+}
+
+void FreeSprite(Sprite &sprite)
+{
+	delete[] sprite.C;
 }

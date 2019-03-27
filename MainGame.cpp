@@ -161,6 +161,8 @@ void Intro() {
 		ScreenBuffer::drawToConsole();
 	}
 	Sleep(1000);
+	FreeSprite(Logo_Inner);
+	FreeSprite(Black);
 }
 
 // === MENU ===
@@ -183,7 +185,7 @@ void LoadMenuData()
 
 void DrawMenu()
 {
-	ScreenBuffer::fillBuffer('\0', 0);
+	ScreenBuffer::fillBuffer(32, 0);
 	ScreenBuffer::drawToConsole();
 	DrawSprite(Logo_Outline, 10, 5);
 	DrawSprite(Menu_Play, 20, 30);
