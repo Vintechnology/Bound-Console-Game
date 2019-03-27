@@ -132,7 +132,35 @@ void Depose() {
 // === INTRO ===
 
 void Intro() {
-
+	Sprite Black;
+	LoadSprite(Black, "GameData/Logo/Black.dat");
+	Sprite Logo_Inner;
+	LoadSprite(Logo_Inner, "GameData/Logo/Logo_Inner.dat");
+	Sleep(500);
+	DrawSprite(Logo_Inner, 11, 35);
+	ScreenBuffer::drawToConsole();
+	Sleep(500);
+	for (int i = 0; i < 6; i++)
+	{
+		Sleep(50);
+		DrawSprite(Logo_Outline, 10, 34);
+		for (int j = 0; j < 5; j++)
+			if (j != i)
+				DrawSprite(Black, 12 * j + 10, 34);
+		DrawSprite(Logo_Inner, 11, 35);
+		ScreenBuffer::drawToConsole();
+	}
+	for (int i = 0; i < 5; i++)
+	{
+		Sleep(50);
+		DrawSprite(Logo_Outline, 10, 34);
+		for (int j = i + 1; j < 5; j++)
+			if (j != i)
+				DrawSprite(Black, 12 * j + 10, 34);
+		DrawSprite(Logo_Inner, 11, 35);
+		ScreenBuffer::drawToConsole();
+	}
+	Sleep(1000);
 }
 
 // === MENU ===
@@ -155,6 +183,8 @@ void LoadMenuData()
 
 void DrawMenu()
 {
+	ScreenBuffer::fillBuffer('\0', 0);
+	ScreenBuffer::drawToConsole();
 	DrawSprite(Logo_Outline, 10, 5);
 	DrawSprite(Menu_Play, 20, 30);
 	DrawSprite(Menu_Options, 20, 39);
