@@ -2,7 +2,7 @@
 #include <fstream>
 #include "../ScreenBuffer/ScreenBuffer.h"
 
-_CHAR_INFO SIndx(Sprite &sprite, int x, int y)
+CHAR_INFO SIndx(Sprite &sprite, int x, int y)
 {
 	return sprite.C[y*sprite.W + x];
 }

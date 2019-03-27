@@ -47,7 +47,7 @@ int rightPressed;
 struct Ball {
 	float x;
 	float y;
-	float g=10.0f;	//Gravity
+	float g=10.0f;	//Gravity |  @ThanhViet: set g as a constant outside struct will be more logical
 	float v=0.0f;	//Velocity
 	// Add something if you need
 };
@@ -284,12 +284,12 @@ void GameLogic(float elapsedTime) {
 }
 
 
-void ObstacleLogic(float fElapsedTime)
-{
+void ObstacleLogic(float fElapsedTime)// @ThanhUy: Algorithms is too ambigous. Find a simpler so that you and our member won't find it hard to 
+{									  // modify, update and debug in the future
 	srand(time(NULL));
 	for (int i = 0; i < 3; i++)
 	{
-		if (Obstacle[i].spaceY <= 1)
+		if (Obstacle[i].spaceY <= 1) // @ThanhUy: Why <=1. You know that you don't need to worry about the game's border, do you? 
 		{
 			Obstacle[3].spaceX = Obstacle[i].spaceX;
 			Obstacle[3].spaceY = Obstacle[i].spaceY;
@@ -304,7 +304,7 @@ void ObstacleLogic(float fElapsedTime)
 
 	
 			
-			Obstacle[3].spaceY -= 6.0f*fElapsedTime;
+		Obstacle[3].spaceY -= 6.0f*fElapsedTime;
 		
 
 
@@ -312,7 +312,7 @@ void ObstacleLogic(float fElapsedTime)
 
 }
 
-void controlBall(float elapsedTime)
+void controlBall(float elapsedTime) // @ThanhViet: The ball jump too short and move to left and right so quick. You will need to update this
 {
 	if(spacePressed)
 		ball.v=-ball.g/2.0f;
@@ -326,7 +326,7 @@ void controlBall(float elapsedTime)
 		ball.x+=10*elapsedTime;
 }
 
-void DrawLogic()
+void DrawLogic()// @GiaVinh: Clean your code
 {
 	if (ball.y > BALL_LIMIT*1.0f)
 	{
@@ -342,7 +342,7 @@ void DrawLogic()
 	}
 }
 
-void Collision()
+void Collision()// @GiaVinh: Update your function. Using BALL_RADIUS instead of BALL_HEIGHT for calculating collision
 {
 	for (int i = 0; i < NUMBER_OF_WALLS; i++)
 	{
@@ -372,6 +372,7 @@ void drawHUD() {
 	ScreenBuffer::drawLine(SCREEN_WIDTH - 1, 0, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1, ' ', Color::BG_WHITE);
 
 	ScreenBuffer::drawLine(GAME_WIDTH + 1, 0, GAME_WIDTH + 1, SCREEN_HEIGHT - 1, ' ', Color::BG_WHITE);
+	//TODO: Draw score
 }
 
 void drawStage(int originX, int originY, int maxX, int maxY) {
