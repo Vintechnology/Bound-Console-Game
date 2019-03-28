@@ -322,22 +322,28 @@ void ObstacleLogic(float fElapsedTime)// @ThanhUy: Algorithms is too ambigous. F
 	srand(time(NULL));
 	for (int i = 0; i < 3; i++)
 	{
-		if (Obstacle[i].spaceY <= 1) // @ThanhUy: Why <=1. You know that you don't need to worry about the game's border, do you? 
+		Obstacle[i].spaceY -= 8.0f*fElapsedTime; //this is to keep the Obstacle (Wall) going up
+		
+		
+		if (Obstacle[i].spaceY <= 0) // this to make the transition of wall which touch the top border to the bottom border smother.
 		{
 			Obstacle[3].spaceX = Obstacle[i].spaceX;
 			Obstacle[3].spaceY = Obstacle[i].spaceY;
 			Obstacle[i].spaceX = rand() % (GAME_WIDTH - SPACE_WIDTH);
 			Obstacle[i].spaceY = GAME_HEIGHT - 1 + Obstacle[3].spaceY;
 		}
-		while (Obstacle[i].spaceX < 3)
+		Obstacle[3].spaceY -= 6.0f*fElapsedTime;
+		
+		
+		while (Obstacle[i].spaceX < 3) //this is to make sure the Obstall Space wont touch the Left boder.
 		{
-			Obstacle[i].spaceX = rand() % (GAME_WIDTH - SPACE_WIDTH);
+			Obstacle[i].spaceX += 2;
 		}
-		Obstacle[i].spaceY -= 8.0f*fElapsedTime;
+		
 
 	
 			
-		Obstacle[3].spaceY -= 6.0f*fElapsedTime;
+		
 		
 
 
