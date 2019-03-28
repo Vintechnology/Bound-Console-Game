@@ -133,9 +133,9 @@ void Depose() {
 
 void Intro() {
 	Sprite Black;
-	LoadSprite(Black, "GameData/Logo/Black.dat");
+	LoadSprite(Black, "Bound-Console-Game/GameData/Logo/Black.dat");
 	Sprite Logo_Inner;
-	LoadSprite(Logo_Inner, "GameData/Logo/Logo_Inner.dat");
+	LoadSprite(Logo_Inner, "Bound-Console-Game/GameData/Logo/Logo_Inner.dat");
 	Sleep(500);
 	DrawSprite(Logo_Inner, 11, 35);
 	ScreenBuffer::drawToConsole();
