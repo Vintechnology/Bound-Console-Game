@@ -7,7 +7,7 @@
 #include "ScreenBuffer/ScreenBuffer.h"
 #include "ScreenBuffer/Color.h"
 #include "AudioPlayer/AudioPlayer.h"
-#include "Illustration/Illustration.h"
+#include "SpriteRenderer/SpriteRenderer.h"
 
 // === CONSTANTS DECLARE ===
 const int SCREEN_WIDTH = 80;
@@ -293,7 +293,7 @@ void ResetGame() {
 	for (int i = 0; i < 3; i++)
 	{
 		Obstacle[i].spaceX = rand() % (GAME_WIDTH - SPACE_WIDTH);
-		Obstacle[i].spaceY = (i + 1)*SectionHeigth;
+		Obstacle[i].spaceY = (i + 3)*SectionHeigth;
 		while (Obstacle[i].spaceX < 3)
 		{
 			Obstacle[i].spaceX = rand() % (GAME_WIDTH - SPACE_WIDTH);
@@ -339,8 +339,8 @@ void GameLogic(float elapsedTime) {
 }
 
 
-void ObstacleLogic(float fElapsedTime)// @ThanhUy: Algorithms is too ambigous. Find a simpler so that you and our member won't find it hard to 
-{									  // modify, update and debug in the future
+void ObstacleLogic(float fElapsedTime)
+{
 	srand(time(NULL));
 	for (int i = 0; i < 3; i++)
 	{
