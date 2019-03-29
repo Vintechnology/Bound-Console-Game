@@ -20,7 +20,6 @@ const int  GAME_WIDTH = 48;
 const int GAME_HEIGHT = 78;
 
 const int BALL_RADIUS = 1;
-const int BALL_HEIGHT = 3;
 
 const int SPACE_WIDTH = 5;
 const int WALL_HEIGHT = 4;
@@ -62,7 +61,7 @@ struct Wall {
 
 // === GLOBAL VARIABLES DECLARE===
 bool gameOver;
-int score=0;
+int score= 0;
 int bestScore=0;
 int SectionHeigth;
 Ball ball;
@@ -77,8 +76,6 @@ void Init();
 void Depose();
 void ResetGame();
 void onGameUpdate(float elapsedTime);
-
-
 
 int main(int argc, char* argv[]) {
 	Init();
@@ -287,6 +284,8 @@ void ResetGame() {
 	gameOver = false;
 	ball.x = 1 / 2.0f * GAME_WIDTH;
 	ball.y = 1 / 3.0f * GAME_HEIGHT;
+	score = 0;
+	ball.v = 0;
 
 	//Section Heigth is just to know where to put the Obstacle in the first place. So if you change the Game Height, it won't appeared in weird position.
 	SectionHeigth = ((float)GAME_HEIGHT / NUMBER_OF_WALLS + 1) + 5;
@@ -301,6 +300,7 @@ void ResetGame() {
 		}
 	}
 	Obstacle[3].spaceY = -15;
+	Obstacle[3].passed = 1;
 	}
 
 // === HANDLE PLAY INPUT ===
@@ -334,7 +334,7 @@ void BestScore();
 void GameLogic(float elapsedTime) {
 	controlBall(elapsedTime);
 	ObstacleLogic(elapsedTime);
-	//Collision(); // hide for the purpose of seeing bug
+	Collision(); // hide for the purpose of seeing bug
 	DrawLogic();
 }
 
@@ -349,6 +349,7 @@ void ObstacleLogic(float fElapsedTime)// @ThanhUy: Algorithms is too ambigous. F
 		
 		if (Obstacle[i].spaceY <= 0) // this to make the transition of wall which touch the top border to the bottom border smother.
 		{
+			Obstacle[i].passed = 0;
 			Obstacle[3].spaceX = Obstacle[i].spaceX;
 			Obstacle[3].spaceY = Obstacle[i].spaceY;
 			Obstacle[i].spaceX = rand() % (GAME_WIDTH - SPACE_WIDTH);
@@ -381,10 +382,10 @@ void controlBall(float elapsedTime)
 	ball.v+=g*elapsedTime;
 
 	if(leftPressed)
-		ball.x-=5*elapsedTime;
+		ball.x-=10*elapsedTime;
 
 	if(rightPressed)
-		ball.x+=5*elapsedTime;
+		ball.x+=10*elapsedTime;
 }
 
 void DrawLogic()// @GiaVinh: Clean your code
@@ -396,27 +397,23 @@ void DrawLogic()// @GiaVinh: Clean your code
 
 			Obstacle[i].spaceY -= ball.y - BALL_LIMIT*1.0f;
 		ball.y = BALL_LIMIT*1.0f;
-
-
-
-
 	}
 }
 
-void Collision()// @GiaVinh: Update your function. Using BALL_RADIUS instead of BALL_HEIGHT for calculating collision
+void Collision()
 {
 	for (int i = 0; i < NUMBER_OF_WALLS; i++)
 	{
-		if (Obstacle[i].spaceY - ball.y <= BALL_HEIGHT/2 && Obstacle[i].spaceY - ball.y >= -WALL_HEIGHT - BALL_HEIGHT/2 + 1)
+		if (Obstacle[i].spaceY - ball.y <= BALL_RADIUS && Obstacle[i].spaceY - ball.y >= -WALL_HEIGHT - BALL_RADIUS + 1)
 		{
-			if (!(ball.x - Obstacle[i].spaceX >= BALL_HEIGHT/2 && ball.x - Obstacle[i].spaceX <= SPACE_WIDTH - BALL_HEIGHT/2 - 1))
+			if (!(ball.x - Obstacle[i].spaceX >= BALL_RADIUS && ball.x - Obstacle[i].spaceX <= SPACE_WIDTH - BALL_RADIUS - 1))
 				gameOver = 1;
 		}
 	}
 	if (ball.y < 1) gameOver = 1;
 	for (int i = 0; i < NUMBER_OF_WALLS; i++)
 	{
-		if (ball.y == Obstacle[i].spaceY + 4 && Obstacle[i].passed == 0)
+		if (ball.y >= Obstacle[i].spaceY + WALL_HEIGHT && Obstacle[i].passed == 0)
 		{
 			score++;
 			Obstacle[i].passed = 1;
