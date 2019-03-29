@@ -1,6 +1,7 @@
 ﻿#include <iostream>
 #include <conio.h>
 #include <chrono>
+#include <fstream>
 #include <SDL_mixer.h>
 #include <SDL.h>
 #include "ScreenBuffer/ScreenBuffer.h"
@@ -61,8 +62,8 @@ struct Wall {
 
 // === GLOBAL VARIABLES DECLARE===
 bool gameOver;
-int score;
-int bestScore;
+int score=0;
+int bestScore=0;
 int SectionHeigth;
 Ball ball;
 Wall Obstacle[NUMBER_OF_WALLS];
@@ -194,12 +195,32 @@ void DrawMenu()
 	DrawSprite(Menu_Help, 20, 57);
 	DrawSprite(Menu_Exit, 20, 66);
 	ScreenBuffer::drawString(35, 25, "BEST: ", 10);
-	std::string Score = "";
-	int Temp = score;
-	while (Temp > 0)
+
+	//Get Best Score from file txt to show in Menu
+	std::ifstream infile("bestScore.txt");
+	if (!infile.is_open())
 	{
-		Score = (char)(Temp % 10 + 48) + Score;
-		Temp /= 10;
+		std::ofstream out("bestScore.txt");
+		out << 0 << std::endl;
+		out.close();
+		std::ifstream infile("bestScore.txt");
+		infile >> bestScore;
+	}
+	if (infile.is_open())
+		infile >> bestScore;
+	infile.close();
+
+	std::string Score = "";
+	int Temp = bestScore;
+	if(bestScore==0)
+		Score='0';
+	else
+	{
+		while (Temp > 0)
+		{
+			Score = (char)(Temp % 10 + 48) + Score;
+			Temp /= 10;
+		}
 	}
 	ScreenBuffer::drawString(41, 25, Score, 10);
 	ScreenBuffer::drawToConsole();
@@ -308,6 +329,7 @@ void ObstacleLogic(float fElapsedTime);
 void controlBall(float elapsedTime); 
 void Collision();
 void DrawLogic();
+void BestScore();
 
 void GameLogic(float elapsedTime) {
 	controlBall(elapsedTime);
@@ -439,9 +461,33 @@ void GameDraw() {
 /*
 	The update loop of our game
 */
+void BestScore()
+{
+	std::ifstream infile("bestScore.txt");
+	if (!infile.is_open())
+	{
+		std::ofstream out("bestScore.txt");
+		out << 0 << std::endl;
+		out.close();
+		std::ifstream infile("bestScore.txt");
+		infile >> bestScore;
+	}
+	if (infile.is_open())
+		infile >> bestScore;
+	infile.close();
+	if (score > bestScore)
+	{
+		bestScore = score;
+		std::ofstream outfile("bestScore.txt");
+		if (outfile.is_open())
+			outfile << bestScore;
+		outfile.close();
+	}
+}
 void onGameUpdate(float elapsedTime) {
 	GameHandleInput();
 	GameLogic(elapsedTime);
+	BestScore();
 	GameDraw();
 }
 
