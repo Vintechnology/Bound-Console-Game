@@ -292,6 +292,7 @@ void ResetGame() {
 	
 	for (int i = 0; i < 3; i++)
 	{
+		Obstacle[i].passed = 0;
 		Obstacle[i].spaceX = rand() % (GAME_WIDTH - SPACE_WIDTH);
 		Obstacle[i].spaceY = (i + 3)*SectionHeigth;
 		while (Obstacle[i].spaceX < 3)
@@ -349,7 +350,7 @@ void ObstacleLogic(float fElapsedTime)
 		
 		if (Obstacle[i].spaceY <= 0) // this to make the transition of wall which touch the top border to the bottom border smother.
 		{
-			Obstacle[i].passed = 0;
+			Obstacle[i].passed = 0; //this is to know that this wall is not passed.(after recycled)
 			Obstacle[3].spaceX = Obstacle[i].spaceX;
 			Obstacle[3].spaceY = Obstacle[i].spaceY;
 			Obstacle[i].spaceX = rand() % (GAME_WIDTH - SPACE_WIDTH);

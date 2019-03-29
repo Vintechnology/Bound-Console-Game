@@ -1,4 +1,4 @@
-#include "Illustration/Illustration.h"
+#include "SpriteRenderer/SpriteRenderer.h"
 #include "ScreenBuffer/ScreenBuffer.h"
 #include <fstream>
 #include <string>
