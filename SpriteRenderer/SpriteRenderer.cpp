@@ -1,4 +1,4 @@
-#include "Illustration.h"
+#include "SpriteRenderer.h"
 #include <fstream>
 #include "../ScreenBuffer/ScreenBuffer.h"
 
@@ -6,7 +6,7 @@ void LoadSprite(Sprite &sprite, std::string path)
 {
 	std::ifstream input(path);
 	input >> sprite.H >> sprite.W;
-	sprite.C = new _CHAR_INFO[sprite.H*sprite.W];
+	sprite.C = new CHAR_INFO[sprite.H*sprite.W];
 	int Char;
 	for (int i = 0; i < sprite.H*sprite.W; i++)
 	{

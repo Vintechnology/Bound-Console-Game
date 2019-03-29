@@ -7,7 +7,7 @@
 #include "ScreenBuffer/ScreenBuffer.h"
 #include "ScreenBuffer/Color.h"
 #include "AudioPlayer/AudioPlayer.h"
-#include "Illustration/Illustration.h"
+#include "SpriteRenderer/SpriteRenderer.h"
 
 // === CONSTANTS DECLARE ===
 const int SCREEN_WIDTH = 80;

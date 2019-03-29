@@ -6,7 +6,7 @@
 struct Sprite
 {
 	int W, H;
-	_CHAR_INFO *C;
+	CHAR_INFO *C;
 };
 
 void LoadSprite(Sprite &sprite, std::string path);
