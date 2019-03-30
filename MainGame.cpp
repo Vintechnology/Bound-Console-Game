@@ -182,7 +182,6 @@ void Depose() {
 // === INTRO ===
 
 void Intro() {
-	//Mix_PlayChannel(-1, intro, 0);
 	Sprite Black;
 	LoadSprite(Black, "Bound-Console-Game/GameData/Logo/Black.dat");
 	Sprite Logo_Inner;
@@ -299,29 +298,33 @@ int Menu() {
 	{
 		DrawMenu();
 		Key = _getch();
-		AudioPlayer::PauseMusic();
 		switch (Key)
 		{
 		case KEY_E + 32:
 		case KEY_E:
+			AudioPlayer::PauseMusic();
 			return 0;
 
 		case KEY_P + 32:
 		case KEY_P:
+			AudioPlayer::PauseMusic();
 			return 1;
 
 		case KEY_O + 32:
 		case KEY_O:
+			AudioPlayer::PauseMusic();
 			Options();
 			break;
 
 		case KEY_C + 32:
 		case KEY_C:
+			AudioPlayer::PauseMusic();
 			Credits();
 			break;
 
 		case KEY_H + 32:
 		case KEY_H:
+			AudioPlayer::PauseMusic();
 			Help();
 			break;
 		}
