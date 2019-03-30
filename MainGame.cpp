@@ -94,6 +94,56 @@ int main(int argc, char* argv[]) {
 			onGameUpdate(fElapsedTime);
 			ScreenBuffer::drawToConsole();
 		}
+		while (gameOver)
+		{
+			int Temp;
+			std::string StrScore = "0";
+			if (score != 0)
+			{ // convert score from int to string
+				Temp = score;
+				while (Temp > 0)
+				{
+					StrScore = (char)(Temp % 10 + 48) + StrScore;
+					Temp /= 10;
+				}
+			}
+			//Get Best Score from file txt to show in Menu
+			std::ifstream infile("bestScore.txt");
+			if (!infile.is_open())
+			{
+				std::ofstream out("bestScore.txt");
+				out << 0 << std::endl;
+				out.close();
+				std::ifstream infile("bestScore.txt");
+				infile >> bestScore;
+			}
+			if (infile.is_open())
+				infile >> bestScore;
+			infile.close();
+
+			std::string StrBest = "";
+			Temp = bestScore;
+			if (bestScore == 0)
+				StrBest = '0';
+			else
+			{
+				while (Temp > 0)
+				{
+					StrBest = (char)(Temp % 10 + 48) + StrBest;
+					Temp /= 10;
+				}
+			}
+			Sprite Menu_Play; //use Menu_Play while waiting for GameOver sprite
+			LoadSprite(Menu_Play, "Bound-Console-Game/GameData/Menu/Menu_Play.dat");
+			DrawSprite(Menu_Play, 5, 30);
+			ScreenBuffer::drawToConsole();
+			if (_kbhit()) break;
+			ScreenBuffer::drawString(20, 39, "SCORE: ", 10);
+			ScreenBuffer::drawString(26, 39, StrScore , 10);
+			ScreenBuffer::drawString(20, 41, "BEST : ", 10);
+			ScreenBuffer::drawString(26, 41, StrBest, 10);
+			ScreenBuffer::drawString(12, 43, "PRESS ANY KEY TO CONTINUE", 15);
+		}
 	}
 	Depose();
 	// TODO: Close Window
@@ -389,7 +439,7 @@ void controlBall(float elapsedTime)
 		ball.x+=10*elapsedTime;
 }
 
-void DrawLogic()// @GiaVinh: Clean your code
+void DrawLogic()
 {
 	if (ball.y > BALL_LIMIT*1.0f)
 	{
