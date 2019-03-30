@@ -330,7 +330,7 @@ void ObstacleLogic(float fElapsedTime);
 void controlBall(float elapsedTime); 
 void Collision();
 void DrawLogic();
-void BestScore();
+int BestScore();
 
 void GameLogic(float elapsedTime) {
 	controlBall(elapsedTime);
@@ -459,7 +459,7 @@ void GameDraw() {
 /*
 	The update loop of our game
 */
-void BestScore()
+int BestScore()
 {
 	std::ifstream infile("bestScore.txt");
 	if (!infile.is_open())
@@ -481,6 +481,7 @@ void BestScore()
 			outfile << bestScore;
 		outfile.close();
 	}
+	return bestScore;
 }
 void onGameUpdate(float elapsedTime) {
 	GameHandleInput();
