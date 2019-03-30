@@ -12,34 +12,19 @@ namespace AudioPlayer {
 		}
 	}
 
-	int PlayBackgroundMusic(string file)
+	void PlayBackgroundMusic(string file)
 	{
 		Mix_Music *music = NULL;
 		music = Mix_LoadMUS(file.c_str());
-		if (music == NULL)
-		{
-			cout << Mix_GetError();// Do something else
-			return 0;
-		}
 		Mix_PlayMusic(music, -1);
 		if (!Mix_PlayingMusic()) Mix_FreeMusic(music);
-		return 1;
 	}
-	int PlayEffect(string file)
+	void PlayEffect(string file)
 	{
 		Mix_Chunk *effect = NULL;
 		effect = Mix_LoadWAV(file.c_str());
-		if (effect == NULL)
-		{
-			cout << Mix_GetError();// do something else
-			return 0;
-		}
-
 		Mix_PlayChannel(-1, effect, 0);
-
-		if (!Mix_Playing(-1)) 
-			Mix_FreeChunk(effect);
-		return 1;
+		if (!Mix_Playing(-1)) Mix_FreeChunk(effect);
 	}
 	void PauseMusic()
 	{

@@ -6,8 +6,8 @@
 using namespace std;
 namespace AudioPlayer {
 	void initPlayer();
-	int PlayBackgroundMusic(string file);
-	int PlayEffect(string file);
+	void PlayBackgroundMusic(string file);
+	void PlayEffect(string file);
 	void PauseMusic();
 	void ResumeMusic();
 	void CleanUp();

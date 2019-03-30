@@ -66,7 +66,7 @@ int bestScore=0;
 int SectionHeigth;
 Ball ball;
 Wall Obstacle[NUMBER_OF_WALLS];
-
+//Mix_Chunk *intro = Mix_LoadWAV("Bound-Console-Game/Music/Intro");
 
 
 // === FUNCTION DECLARE ===
@@ -94,6 +94,7 @@ int main(int argc, char* argv[]) {
 			onGameUpdate(fElapsedTime);
 			ScreenBuffer::drawToConsole();
 		}
+		AudioPlayer::PlayEffect("Bound-Console-Game/GameData/Music/Die.wav");
 		while (gameOver)
 		{
 			int Temp;
@@ -164,6 +165,7 @@ void Init() {
 	// TODO: Init AudioPLayer
 	// TODO: Load game asset
 	// Load Intro and Menu
+	AudioPlayer::initPlayer();
 	LoadSprite(Logo_Outline, "Bound-Console-Game/GameData/Logo/Logo_Outline.dat");
 	LoadMenuData();
 }
@@ -180,6 +182,7 @@ void Depose() {
 // === INTRO ===
 
 void Intro() {
+	//Mix_PlayChannel(-1, intro, 0);
 	Sprite Black;
 	LoadSprite(Black, "Bound-Console-Game/GameData/Logo/Black.dat");
 	Sprite Logo_Inner;
@@ -187,6 +190,7 @@ void Intro() {
 	Sleep(500);
 	DrawSprite(Logo_Inner, 11, 35);
 	ScreenBuffer::drawToConsole();
+	AudioPlayer::PlayEffect("Bound-Console-Game/GameData/Music/Intro.wav");
 	Sleep(500);
 	for (int i = 0; i < 6; i++)
 	{
@@ -289,11 +293,13 @@ void Help()
 }
 
 int Menu() {
+	AudioPlayer::PlayBackgroundMusic("Bound-Console-Game/GameData/Music/Menu.wav");
 	int Key;
 	while (true)
 	{
 		DrawMenu();
 		Key = _getch();
+		AudioPlayer::PauseMusic();
 		switch (Key)
 		{
 		case KEY_E + 32:
@@ -427,8 +433,11 @@ void ObstacleLogic(float fElapsedTime)
 
 void controlBall(float elapsedTime)
 {
-	if(spacePressed)
-		ball.v=-g/1.3f;
+	if (spacePressed)
+	{
+		ball.v = -g / 1.3f;
+		AudioPlayer::PlayEffect("Bound-Console-Game/GameData/Music/Jump.wav");
+	}
 	ball.y+=ball.v*elapsedTime;
 	ball.v+=g*elapsedTime;
 
@@ -455,9 +464,9 @@ void Collision()
 {
 	for (int i = 0; i < NUMBER_OF_WALLS; i++)
 	{
-		if (Obstacle[i].spaceY - ball.y <= BALL_RADIUS && Obstacle[i].spaceY - ball.y >= -WALL_HEIGHT - BALL_RADIUS + 1)
+		if (Obstacle[i].spaceY - ball.y < BALL_RADIUS + 1 && Obstacle[i].spaceY - ball.y > -WALL_HEIGHT - BALL_RADIUS)
 		{
-			if (!(ball.x - Obstacle[i].spaceX >= BALL_RADIUS && ball.x - Obstacle[i].spaceX <= SPACE_WIDTH - BALL_RADIUS - 1))
+			if (!(ball.x - Obstacle[i].spaceX > BALL_RADIUS - 1 && ball.x - Obstacle[i].spaceX < SPACE_WIDTH - BALL_RADIUS))
 				gameOver = 1;
 		}
 	}
@@ -466,6 +475,7 @@ void Collision()
 	{
 		if (ball.y >= Obstacle[i].spaceY + WALL_HEIGHT && Obstacle[i].passed == 0)
 		{
+			AudioPlayer::PlayEffect("Bound-Console-Game/GameData/Music/Point.wav");
 			score++;
 			Obstacle[i].passed = 1;
 		}
