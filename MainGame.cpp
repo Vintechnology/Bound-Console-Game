@@ -76,6 +76,7 @@ void Init();
 void Depose();
 void ResetGame();
 void onGameUpdate(float elapsedTime);
+void GameOver();
 
 int main(int argc, char* argv[]) {
 	Init();
@@ -95,57 +96,7 @@ int main(int argc, char* argv[]) {
 			ScreenBuffer::drawToConsole();
 		}
 		AudioPlayer::PlayEffect("Bound-Console-Game/GameData/Music/Die.wav");
-		while (gameOver)
-		{
-			int Temp;
-			std::string StrScore = "0";
-			if (score != 0)
-			{ // convert score from int to string
-				Temp = score;
-				while (Temp > 0)
-				{
-					StrScore = (char)(Temp % 10 + 48) + StrScore;
-					Temp /= 10;
-				}
-			}
-			//Get Best Score from file txt to show in Menu
-			std::ifstream infile("bestScore.txt");
-			if (!infile.is_open())
-			{
-				std::ofstream out("bestScore.txt");
-				out << 0 << std::endl;
-				out.close();
-				std::ifstream infile("bestScore.txt");
-				infile >> bestScore;
-			}
-			if (infile.is_open())
-				infile >> bestScore;
-			infile.close();
-
-			std::string StrBest = "";
-			Temp = bestScore;
-			if (bestScore == 0)
-				StrBest = '0';
-			else
-			{
-				while (Temp > 0)
-				{
-					StrBest = (char)(Temp % 10 + 48) + StrBest;
-					Temp /= 10;
-				}
-			}
-			Sprite Menu_Play; //use Menu_Play while waiting for GameOver sprite
-			LoadSprite(Menu_Play, "Bound-Console-Game/GameData/Menu/Menu_Play.dat");
-			DrawSprite(Menu_Play, 5, 30);
-			ScreenBuffer::drawString(20, 39, "SCORE: ", 10);
-			ScreenBuffer::drawString(26, 39, StrScore , 10);
-			ScreenBuffer::drawString(20, 41, "BEST : ", 10);
-			ScreenBuffer::drawString(26, 41, StrBest, 10);
-			ScreenBuffer::drawString(12, 43, "PRESS ANY KEY TO CONTINUE", 15);
-			ScreenBuffer::drawToConsole();
-			while (_kbhit()) _getch(); //clear the input buffer
-			_getch(); break;
-		}
+		GameOver();
 	}
 	Depose();
 	// TODO: Close Window
@@ -545,6 +496,47 @@ void onGameUpdate(float elapsedTime) {
 	BestScore();
 	GameDraw();
 }
-
+void GameOver()
+{
+	while (gameOver)
+	{
+		int Temp;
+		std::string StrScore = "";
+		Temp = score;
+		if (score == 0)
+			StrScore = '0';
+		else
+		{
+			while (Temp > 0)
+			{
+				StrScore = (char)(Temp % 10 + 48) + StrScore;
+				Temp /= 10;
+			}
+		}
+		
+		std::string StrBest = "";
+		Temp = bestScore;
+		if (bestScore == 0)
+			StrBest = '0';
+		else
+		{
+			while (Temp > 0)
+			{
+				StrBest = (char)(Temp % 10 + 48) + StrBest;
+				Temp /= 10;
+			}
+		}
+		
+		DrawSprite(Menu_Play, 5, 30);	// Waitting GAME OVER DESIGN
+		ScreenBuffer::drawString(15, 39, "SCORE: ", 10);
+		ScreenBuffer::drawString(30, 39, StrScore, 10);
+		ScreenBuffer::drawString(15, 41, "BEST SCORE : ", 10);
+		ScreenBuffer::drawString(30, 41, StrBest, 10);
+		ScreenBuffer::drawString(12, 43, "PRESS ANY KEY TO CONTINUE", 15);
+		ScreenBuffer::drawToConsole();
+		while (_kbhit()) _getch(); //clear the input buffer
+		_getch(); break;
+	}
+}
 
 // -------- end --------
