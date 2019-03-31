@@ -137,13 +137,14 @@ int main(int argc, char* argv[]) {
 			Sprite Menu_Play; //use Menu_Play while waiting for GameOver sprite
 			LoadSprite(Menu_Play, "Bound-Console-Game/GameData/Menu/Menu_Play.dat");
 			DrawSprite(Menu_Play, 5, 30);
-			ScreenBuffer::drawToConsole();
-			if (_kbhit()) break;
 			ScreenBuffer::drawString(20, 39, "SCORE: ", 10);
 			ScreenBuffer::drawString(26, 39, StrScore , 10);
 			ScreenBuffer::drawString(20, 41, "BEST : ", 10);
 			ScreenBuffer::drawString(26, 41, StrBest, 10);
 			ScreenBuffer::drawString(12, 43, "PRESS ANY KEY TO CONTINUE", 15);
+			ScreenBuffer::drawToConsole();
+			while (_kbhit()) _getch(); //clear the input buffer
+			_getch(); break;
 		}
 	}
 	Depose();
@@ -296,6 +297,7 @@ int Menu() {
 	int Key;
 	while (true)
 	{
+		while (_kbhit()) _getch(); //clear the input buffer
 		DrawMenu();
 		Key = _getch();
 		switch (Key)
@@ -422,16 +424,7 @@ void ObstacleLogic(float fElapsedTime)
 		{
 			Obstacle[i].spaceX += 2;
 		}
-		
-
-	
-			
-		
-		
-
-
 	}
-
 }
 
 void controlBall(float elapsedTime)
