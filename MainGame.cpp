@@ -131,6 +131,13 @@ void Depose() {
 	ScreenBuffer::deposeBuffer();
 	// TODO: Free AudioPLayer
 	// TODO: Free game asset
+	// Free Menu assets
+	FreeSprite(Logo_Outline);
+	FreeSprite(Menu_Play);
+	FreeSprite(Menu_Options);
+	FreeSprite(Menu_Credits);
+	FreeSprite(Menu_Help);
+	FreeSprite(Menu_Exit);
 }
 
 // === INTRO ===
