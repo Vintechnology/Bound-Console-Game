@@ -110,7 +110,13 @@ int main(int argc, char* argv[]) {
 /*
 	Initialize global variables, loading game assets, records or something that will need to init once in program
 */
-Sprite Logo_Outline;
+Sprite 
+Logo_Outline,
+Menu_Play,
+Menu_Options,
+Menu_Credits,
+Menu_Help,
+Menu_Exit;
 
 void LoadMenuData();
 
@@ -179,12 +185,7 @@ void Intro() {
 
 // === MENU ===
 
-Sprite
-Menu_Play,
-Menu_Options,
-Menu_Credits,
-Menu_Help,
-Menu_Exit;
+
 
 void LoadMenuData()
 {
@@ -671,6 +672,7 @@ void onGameUpdate(float elapsedTime) {
 	GameLogic(elapsedTime);
 	BestScore();
 	GameDraw();
+	UpdateAndShowScore();
 }
 void GameOver()
 {
@@ -703,7 +705,10 @@ void GameOver()
 			}
 		}
 		
-		DrawSprite(Menu_Play, 5, 30);	// Waitting GAME OVER DESIGN
+		Sprite Game_over;
+		LoadSprite(Game_over,"Bound-Console-Game/GameData/GameOver/GameOver.dat")
+		DrawSprite(Game_over, 5, 30);
+		FreeSprite(Game_over);
 		ScreenBuffer::drawString(15, 39, "SCORE: ", 10);
 		ScreenBuffer::drawString(30, 39, StrScore, 10);
 		ScreenBuffer::drawString(15, 41, "BEST SCORE : ", 10);
