@@ -706,14 +706,15 @@ void GameOver()
 		}
 		
 		Sprite Game_over;
-		LoadSprite(Game_over,"Bound-Console-Game/GameData/GameOver/GameOver.dat")
-		DrawSprite(Game_over, 5, 30);
+		LoadSprite(Game_over, "Bound-Console-Game/GameData/GameOver/GameOver.dat");
+		DrawSprite(Game_over, 3, 32);
 		FreeSprite(Game_over);
-		ScreenBuffer::drawString(15, 39, "SCORE: ", 10);
-		ScreenBuffer::drawString(30, 39, StrScore, 10);
-		ScreenBuffer::drawString(15, 41, "BEST SCORE : ", 10);
-		ScreenBuffer::drawString(30, 41, StrBest, 10);
-		ScreenBuffer::drawString(12, 43, "PRESS ANY KEY TO CONTINUE", 15);
+		ScreenBuffer::drawString(19, 40, "SCORE", 176);
+		ScreenBuffer::drawString(26, 40, StrScore, 176);
+		ScreenBuffer::drawString(20, 42, "BEST", 176);
+		ScreenBuffer::drawString(26, 42, StrBest, 176);
+		ScreenBuffer::drawLine(4, 44, 45, 44, 223, 11);
+		ScreenBuffer::drawString(4, 45, " [ESC] BACK TO MENU  [SPACE] PLAY AGAIN   ", 11);
 		ScreenBuffer::drawToConsole();
 		while (_kbhit()) _getch(); //clear the input buffer
 		_getch(); break;
