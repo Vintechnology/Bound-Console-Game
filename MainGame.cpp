@@ -255,11 +255,11 @@ void Help()
 
 int Menu() {
 	AudioPlayer::PlayBackgroundMusic("Bound-Console-Game/GameData/Music/Menu.wav");
+	DrawMenu();
 	int Key;
 	while (true)
 	{
 		while (_kbhit()) _getch(); //clear the input buffer
-		DrawMenu();
 		Key = _getch();
 		switch (Key)
 		{
@@ -277,18 +277,21 @@ int Menu() {
 		case KEY_O:
 			AudioPlayer::PauseMusic();
 			Options();
+			DrawMenu();
 			break;
 
 		case KEY_C + 32:
 		case KEY_C:
 			AudioPlayer::PauseMusic();
 			Credits();
+			DrawMenu();
 			break;
 
 		case KEY_H + 32:
 		case KEY_H:
 			AudioPlayer::PauseMusic();
 			Help();
+			DrawMenu();
 			break;
 		}
 	}
