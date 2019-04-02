@@ -445,12 +445,13 @@ void Collision()
 // === PLAY DRAW ===
 void drawHUD() {
 
-	ScreenBuffer::drawLine(0, 0, SCREEN_WIDTH - 1, 0, ' ', Color::BG_WHITE);
+	/*ScreenBuffer::drawLine(0, 0, SCREEN_WIDTH - 1, 0, ' ', Color::BG_WHITE);
 	ScreenBuffer::drawLine(0, 0, 0, SCREEN_HEIGHT - 1, ' ', Color::BG_WHITE);
 	ScreenBuffer::drawLine(0, SCREEN_HEIGHT - 1, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1, ' ', Color::BG_WHITE);
 	ScreenBuffer::drawLine(SCREEN_WIDTH - 1, 0, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1, ' ', Color::BG_WHITE);
 
-	ScreenBuffer::drawLine(GAME_WIDTH + 1, 0, GAME_WIDTH + 1, SCREEN_HEIGHT - 1, ' ', Color::BG_WHITE);
+	ScreenBuffer::drawLine(GAME_WIDTH + 1, 0, GAME_WIDTH + 1, SCREEN_HEIGHT - 1, ' ', Color::BG_WHITE);*/
+	ScreenBuffer::drawRect(0, 0, GAME_WIDTH + 1, GAME_HEIGHT + 1, 219, 15);
 	//TODO: Draw score
 
 	UpdateAndShowScore();
@@ -715,12 +716,12 @@ void GameOver()
 		LoadSprite(Game_over, "Bound-Console-Game/GameData/GameOver/GameOver.dat");
 		DrawSprite(Game_over, 3, 32);
 		FreeSprite(Game_over);
-		ScreenBuffer::drawString(19, 40, "SCORE", Color::BG_CYAN);
-		ScreenBuffer::drawString(26, 40, StrScore, Color::BG_CYAN);
-		ScreenBuffer::drawString(20, 42, "BEST", Color::BG_CYAN);
-		ScreenBuffer::drawString(26, 42, StrBest, Color::BG_CYAN);
-		ScreenBuffer::drawLine(4, 44, 45, 44, 223, Color::FG_CYAN);// @TranTrung: maybe you don't need to pass color on this line
-		ScreenBuffer::drawString(4, 45, " [ESC] BACK TO MENU  [SPACE] PLAY AGAIN   ", Color::FG_CYAN);
+		ScreenBuffer::drawString(19, 40, "SCORE", 224);
+		ScreenBuffer::drawString(26, 40, StrScore, 224);
+		ScreenBuffer::drawString(20, 42, "BEST", 224);
+		ScreenBuffer::drawString(26, 42, StrBest, 224);
+		ScreenBuffer::drawLine(4, 44, 45, 44, 223, 14); //@VinhPham: It's important for the text beneath
+		ScreenBuffer::drawString(4, 45, "        PRESS ANY KEY TO CONTINUE         ", 14);
 		ScreenBuffer::drawToConsole();
 		while (_kbhit()) _getch(); //clear the input buffer
 		_getch(); break;
