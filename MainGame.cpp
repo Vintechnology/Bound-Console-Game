@@ -122,7 +122,6 @@ void LoadMenuData();
 
 void Init() {
 	ScreenBuffer::SetupBufferScreen(SCREEN_WIDTH, SCREEN_HEIGHT, FONT_WIDTH, FONT_HEIGHT);
-	// TODO: Init AudioPLayer
 	// TODO: Load game asset
 	// Load Intro and Menu
 	AudioPlayer::initPlayer();
@@ -453,6 +452,8 @@ void drawHUD() {
 
 	ScreenBuffer::drawLine(GAME_WIDTH + 1, 0, GAME_WIDTH + 1, SCREEN_HEIGHT - 1, ' ', Color::BG_WHITE);
 	//TODO: Draw score
+
+	UpdateAndShowScore();
 }
 
 void drawStage(int originX, int originY, int maxX, int maxY) {
@@ -480,30 +481,13 @@ void GameDraw() {
 /*
 	The update loop of our game
 */
-int BestScore()
-{
-	std::ifstream infile("bestScore.txt");
-	if (!infile.is_open())
-	{
-		std::ofstream out("bestScore.txt");
-		out << 0 << std::endl;
-		out.close();
-		std::ifstream infile("bestScore.txt");
-		infile >> bestScore;
-	}
-	if (infile.is_open())
-		infile >> bestScore;
-	infile.close();
-	if (score > bestScore)
-	{
-		bestScore = score;
-		std::ofstream outfile("bestScore.txt");
-		if (outfile.is_open())
-			outfile << bestScore;
-		outfile.close();
-	}
-	return bestScore;
+
+void onGameUpdate(float elapsedTime) {
+	GameHandleInput();
+	GameLogic(elapsedTime);
+	GameDraw();
 }
+
 void DrawScore(int temp,int x,int y)
 {
 	Sprite n_0;
@@ -670,15 +654,34 @@ void UpdateAndShowScore()
 		DrawScore(temp7, 75,5);
 	}
 }
-void onGameUpdate(float elapsedTime) {
-	GameHandleInput();
-	GameLogic(elapsedTime);
-	BestScore();
-	GameDraw();
-	UpdateAndShowScore();
+
+int BestScore()
+{
+	std::ifstream infile("bestScore.txt");
+	if (!infile.is_open())
+	{
+		std::ofstream out("bestScore.txt");
+		out << 0 << std::endl;
+		out.close();
+		std::ifstream infile("bestScore.txt");
+		infile >> bestScore;
+	}
+	if (infile.is_open())
+		infile >> bestScore;
+	infile.close();
+	if (score > bestScore)
+	{
+		bestScore = score;
+		std::ofstream outfile("bestScore.txt");
+		if (outfile.is_open())
+			outfile << bestScore;
+		outfile.close();
+	}
+	return bestScore;
 }
 void GameOver()
 {
+	BestScore();
 	while (gameOver)
 	{
 		int Temp;
@@ -712,12 +715,12 @@ void GameOver()
 		LoadSprite(Game_over, "Bound-Console-Game/GameData/GameOver/GameOver.dat");
 		DrawSprite(Game_over, 3, 32);
 		FreeSprite(Game_over);
-		ScreenBuffer::drawString(19, 40, "SCORE", 176);
-		ScreenBuffer::drawString(26, 40, StrScore, 176);
-		ScreenBuffer::drawString(20, 42, "BEST", 176);
-		ScreenBuffer::drawString(26, 42, StrBest, 176);
-		ScreenBuffer::drawLine(4, 44, 45, 44, 223, 11);
-		ScreenBuffer::drawString(4, 45, " [ESC] BACK TO MENU  [SPACE] PLAY AGAIN   ", 11);
+		ScreenBuffer::drawString(19, 40, "SCORE", Color::BG_CYAN);
+		ScreenBuffer::drawString(26, 40, StrScore, Color::BG_CYAN);
+		ScreenBuffer::drawString(20, 42, "BEST", Color::BG_CYAN);
+		ScreenBuffer::drawString(26, 42, StrBest, Color::BG_CYAN);
+		ScreenBuffer::drawLine(4, 44, 45, 44, 223, Color::FG_CYAN);// @TranTrung: maybe you don't need to pass color on this line
+		ScreenBuffer::drawString(4, 45, " [ESC] BACK TO MENU  [SPACE] PLAY AGAIN   ", Color::FG_CYAN);
 		ScreenBuffer::drawToConsole();
 		while (_kbhit()) _getch(); //clear the input buffer
 		_getch(); break;
