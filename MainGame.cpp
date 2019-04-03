@@ -266,7 +266,14 @@ void Credits()
 
 void Help()
 {
-
+	ScreenBuffer::fillBuffer(32, 0);
+	Sprite Help;
+	LoadSprite(Help, "Bound-Console-Game/GameData/Help/Help.dat");
+	DrawSprite(Help, 32, 5);
+	FreeSprite(Help);
+	ScreenBuffer::drawString(10, 12, "____________________________________________________________");
+	ScreenBuffer::drawToConsole();
+	_getch();
 }
 
 int Menu() {
