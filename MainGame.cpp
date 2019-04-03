@@ -49,6 +49,7 @@ int rightPressed;
 struct Ball {
 	float x;
 	float y;
+	int passed = 0;
 	float v=0.0f;	//Velocity
 	// Add something if you need
 };
@@ -234,14 +235,18 @@ void Options()
 }
 
 void Credits()
-{	//unfinished
+{	
 	ScreenBuffer::fillBuffer(32, 0);
 	Sprite Credits;
 	LoadSprite(Credits, "Bound-Console-Game/GameData/Credits/Credits.dat");
 	DrawSprite(Credits, 25, 5);
 	ScreenBuffer::drawString(10, 12, "____________________________________________________________");
-	ScreenBuffer::drawString(28, 14, "A PRODUCE OF TEAM ______", 8);
-	ScreenBuffer::drawString(20, 16, "FOR MORE INFORMATION PLEASE CONTACT US AT", 8);
+	ScreenBuffer::drawString(16, 14, "This game is a school project created by a group", 10);
+	ScreenBuffer::drawString(28, 15, "of first - year students", 10); 
+	ScreenBuffer::drawString(16, 17, "Bound is 100% a Command Line game which graphics", 10);
+	ScreenBuffer::drawString(19, 18, "are all characters and background coloring", 10);
+	ScreenBuffer::drawString(20, 20, "Console rendering was inspired by javidx9's", 10);
+	ScreenBuffer::drawString(27, 21, "olcConsoleGameEngine project", 10);
 	ScreenBuffer::drawString(31, 30, "LEADER", 3);
 	ScreenBuffer::drawString(39, 30, "PHAM HONG VINH");
 	ScreenBuffer::drawString(29, 35, "DESIGNER", 3);
@@ -250,9 +255,9 @@ void Credits()
 	ScreenBuffer::drawString(39, 40, "VO TRONG GIA VINH");
 	ScreenBuffer::drawString(39, 42, "LE THANH VIET");
 	ScreenBuffer::drawString(39, 44, "BUI THANH UY");
-	ScreenBuffer::drawString(19, 50, "MUSIC/SFX RESOURCE", 3);
+	ScreenBuffer::drawString(21, 50, "MUSIC/SFX SOURCE", 3);
 	ScreenBuffer::drawString(39, 50, "FREESOUND.COM");
-	ScreenBuffer::drawString(24, 55, "LIBRARY USING", 3);
+	ScreenBuffer::drawString(25, 55, "LIBRARY USED", 3);
 	ScreenBuffer::drawString(39, 55, "SDL2/MIXER");
 	ScreenBuffer::drawToConsole();
 	_getch();
@@ -322,6 +327,7 @@ void ResetGame() {
 	ball.y = 1 / 3.0f * GAME_HEIGHT;
 	score = 0;
 	ball.v = 0;
+	ball.passed = 0;
 
 	//Section Heigth is just to know where to put the Obstacle in the first place. So if you change the Game Height, it won't appeared in weird position.
 	SectionHeigth = ((float)GAME_HEIGHT / NUMBER_OF_WALLS + 1) + 5;
@@ -407,6 +413,7 @@ void controlBall(float elapsedTime)
 	if (spacePressed)
 	{
 		ball.v = -g / 1.3f;
+		ball.passed = 0;
 		AudioPlayer::PlayEffect("Bound-Console-Game/GameData/Music/Jump.wav");
 	}
 	ball.y+=ball.v*elapsedTime;
@@ -447,8 +454,9 @@ void Collision()
 		if (ball.y >= Obstacle[i].spaceY + WALL_HEIGHT && Obstacle[i].passed == 0)
 		{
 			AudioPlayer::PlayEffect("Bound-Console-Game/GameData/Music/Point.wav");
-			score++;
+			score+=pow(2.0, ball.passed);
 			Obstacle[i].passed = 1;
+			ball.passed++;
 		}
 	}
 }
@@ -647,10 +655,10 @@ void GameOver()
 		ScreenBuffer::drawString(20, 42, "BEST", 224);
 		ScreenBuffer::drawString(26, 42, StrBest, 224);
 		ScreenBuffer::drawLine(4, 44, 45, 44, 223, 14); //@VinhPham: It's important for the text beneath
-		ScreenBuffer::drawString(4, 45, "        PRESS ANY KEY TO CONTINUE         ", 14);
+		ScreenBuffer::drawString(4, 45, "         PRESS ENTER TO CONTINUE          ", 14);
 		ScreenBuffer::drawToConsole();
 		while (_kbhit()) _getch(); //clear the input buffer
-		_getch(); break;
+		if (GetAsyncKeyState(VK_RETURN) & 0x8000) gameOver = 0;
 	}
 }
 
