@@ -234,8 +234,29 @@ void Options()
 }
 
 void Credits()
-{
-
+{	//unfinished
+	ScreenBuffer::fillBuffer(32, 0);
+	Sprite Credits;
+	LoadSprite(Credits, "Bound-Console-Game/GameData/Credits/Credits.dat");
+	DrawSprite(Credits, 25, 5);
+	ScreenBuffer::drawString(10, 12, "____________________________________________________________");
+	ScreenBuffer::drawString(28, 14, "A PRODUCE OF TEAM ______", 8);
+	ScreenBuffer::drawString(20, 16, "FOR MORE INFORMATION PLEASE CONTACT US AT", 8);
+	ScreenBuffer::drawString(31, 30, "LEADER", 3);
+	ScreenBuffer::drawString(39, 30, "PHAM HONG VINH");
+	ScreenBuffer::drawString(29, 35, "DESIGNER", 3);
+	ScreenBuffer::drawString(39, 35, "NGUYEN TRAN TRUNG");
+	ScreenBuffer::drawString(27, 40, "PROGRAMMER", 3);
+	ScreenBuffer::drawString(39, 40, "VO TRONG GIA VINH");
+	ScreenBuffer::drawString(39, 42, "LE THANH VIET");
+	ScreenBuffer::drawString(39, 44, "BUI THANH UY");
+	ScreenBuffer::drawString(19, 50, "MUSIC/SFX RESOURCE", 3);
+	ScreenBuffer::drawString(39, 50, "FREESOUND.COM");
+	ScreenBuffer::drawString(24, 55, "LIBRARY USING", 3);
+	ScreenBuffer::drawString(39, 55, "SDL2/MIXER");
+	ScreenBuffer::drawToConsole();
+	_getch();
+	FreeSprite(Credits);
 }
 
 void Help()
@@ -350,7 +371,7 @@ void DrawScore(int temp,int x,int y);
 void GameLogic(float elapsedTime) {
 	controlBall(elapsedTime);
 	ObstacleLogic(elapsedTime);
-	Collision(); // hide for the purpose of seeing bug
+	Collision();
 	DrawLogic();
 }
 
@@ -416,7 +437,7 @@ void Collision()
 	{
 		if (Obstacle[i].spaceY - ball.y < BALL_RADIUS + 1 && Obstacle[i].spaceY - ball.y > -WALL_HEIGHT - BALL_RADIUS)
 		{
-			if (!(ball.x - Obstacle[i].spaceX > BALL_RADIUS - 1 && ball.x - Obstacle[i].spaceX < SPACE_WIDTH - BALL_RADIUS))
+			if (!(ball.x - Obstacle[i].spaceX > BALL_RADIUS - 0.5f && ball.x - Obstacle[i].spaceX < SPACE_WIDTH - BALL_RADIUS - 0.5f))
 				gameOver = 1;
 		}
 	}
