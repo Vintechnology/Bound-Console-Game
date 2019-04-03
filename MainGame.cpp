@@ -78,6 +78,8 @@ void Depose();
 void ResetGame();
 void onGameUpdate(float elapsedTime);
 void UpdateAndShowScore();
+int ReadBestScore();
+void SaveBestScore();
 void GameOver();
 
 int main(int argc, char* argv[]) {
@@ -208,18 +210,7 @@ void DrawMenu()
 	ScreenBuffer::drawString(35, 25, "BEST: ", 10);
 
 	//Get Best Score from file txt to show in Menu
-	std::ifstream infile("bestScore.txt");
-	if (!infile.is_open())
-	{
-		std::ofstream out("bestScore.txt");
-		out << 0 << std::endl;
-		out.close();
-		std::ifstream infile("bestScore.txt");
-		infile >> bestScore;
-	}
-	if (infile.is_open())
-		infile >> bestScore;
-	infile.close();
+	ReadBestScore();
 
 	std::string Score = "";
 	int Temp = bestScore;
@@ -354,7 +345,6 @@ void ObstacleLogic(float fElapsedTime);
 void controlBall(float elapsedTime); 
 void Collision();
 void DrawLogic();
-int BestScore();
 void DrawScore(int temp,int x,int y);
 
 void GameLogic(float elapsedTime) {
@@ -491,172 +481,83 @@ void onGameUpdate(float elapsedTime) {
 
 void DrawScore(int temp,int x,int y)
 {
-	Sprite n_0;
-	LoadSprite(n_0, "Bound-Console-Game/GameData/Numbers/0.dat");
-	Sprite n_1;
-	LoadSprite(n_1, "Bound-Console-Game/GameData/Numbers/1.dat");
-	Sprite n_2;
-	LoadSprite(n_2, "Bound-Console-Game/GameData/Numbers/2.dat");
-	Sprite n_3;
-	LoadSprite(n_3, "Bound-Console-Game/GameData/Numbers/3.dat");
-	Sprite n_4;
-	LoadSprite(n_4, "Bound-Console-Game/GameData/Numbers/4.dat");
-	Sprite n_5;
-	LoadSprite(n_5, "Bound-Console-Game/GameData/Numbers/5.dat");
-	Sprite n_6;
-	LoadSprite(n_6, "Bound-Console-Game/GameData/Numbers/6.dat");
-	Sprite n_7;
-	LoadSprite(n_7, "Bound-Console-Game/GameData/Numbers/7.dat");
-	Sprite n_8;
-	LoadSprite(n_8, "Bound-Console-Game/GameData/Numbers/8.dat");
-	Sprite n_9;
-	LoadSprite(n_9, "Bound-Console-Game/GameData/Numbers/9.dat");
+	Sprite numb[10];
+	LoadSprite(numb[0], "Bound-Console-Game/GameData/Numbers/0.dat");
+	LoadSprite(numb[1], "Bound-Console-Game/GameData/Numbers/1.dat");
+	LoadSprite(numb[2], "Bound-Console-Game/GameData/Numbers/2.dat");
+	LoadSprite(numb[3], "Bound-Console-Game/GameData/Numbers/3.dat");
+	LoadSprite(numb[4], "Bound-Console-Game/GameData/Numbers/4.dat");
+	LoadSprite(numb[5], "Bound-Console-Game/GameData/Numbers/5.dat");
+	LoadSprite(numb[6], "Bound-Console-Game/GameData/Numbers/6.dat");
+	LoadSprite(numb[7], "Bound-Console-Game/GameData/Numbers/7.dat");
+	LoadSprite(numb[8], "Bound-Console-Game/GameData/Numbers/8.dat");
+	LoadSprite(numb[9], "Bound-Console-Game/GameData/Numbers/9.dat");
 
 	switch (temp)
 	{
 	case 0:
-		DrawSprite(n_0, x, y);
-		FreeSprite(n_0);
+		DrawSprite(numb[0], x, y);
+		FreeSprite(numb[0]);
 		break;
 	case 1:
-		DrawSprite(n_1, x, y);
-		FreeSprite(n_1);
+		DrawSprite(numb[1], x, y);
+		FreeSprite(numb[1]);
 		break;
 	case 2:
-		DrawSprite(n_2, x, y);
-		FreeSprite(n_2);
+		DrawSprite(numb[2], x, y);
+		FreeSprite(numb[2]);
 		break;
 	case 3:
-		DrawSprite(n_3, x, y);
-		FreeSprite(n_3);
+		DrawSprite(numb[3], x, y);
+		FreeSprite(numb[3]);
 		break;
 	case 4:
-		DrawSprite(n_4, x, y);
-		FreeSprite(n_4);
+		DrawSprite(numb[4], x, y);
+		FreeSprite(numb[4]);
 		break;
 	case 5:
-		DrawSprite(n_5, x, y);
-		FreeSprite(n_5);
+		DrawSprite(numb[5], x, y);
+		FreeSprite(numb[5]);
 		break;
 	case 6:
-		DrawSprite(n_6, x, y);
-		FreeSprite(n_6);
+		DrawSprite(numb[6], x, y);
+		FreeSprite(numb[6]);
 		break;
 	case 7:
-		DrawSprite(n_7, x, y);
-		FreeSprite(n_7);
+		DrawSprite(numb[7], x, y);
+		FreeSprite(numb[7]);
 		break;
 	case 8:
-		DrawSprite(n_8, x, y);
-		FreeSprite(n_8);
+		DrawSprite(numb[8], x, y);
+		FreeSprite(numb[8]);
 		break;
 	case 9:
-		DrawSprite(n_9, x, y);
-		FreeSprite(n_9);
+		DrawSprite(numb[9], x, y);
+		FreeSprite(numb[9]);
 		break;
 	}
 }
 void UpdateAndShowScore()
 {
-	int temp;
-	int temp2;
-	int temp3;
-	int temp4;
-	int temp5;
-	int temp6;
-	int temp7;
-	// 0<= score<=9
-	if ((0 <= score) && ((score < 10)))
+	int temp_score;
+	int t;
+	int x = 78;
+	temp_score = score;
+	if (temp_score == 0)
+		DrawScore(temp_score, x - 3, 5);
+	else
 	{
-		DrawScore(score, 65,5);
-	}
-
-	// 10<= score<= 99
-	else if ((10 <= score) && (score < 100))
-	{
-		temp = score / 10;
-		temp2 = score % 10;
-		DrawScore(temp, 61,5);
-		DrawScore(temp2, 65,5);
-	}
-
-	// 100<= score <=999
-	else if ((100 <= score) && (score < 1000))
-	{
-		temp = score / 100;
-		temp2 = (score - temp * 100) / 10;
-		temp3 = score % 10;
-		DrawScore(temp, 61,5);
-		DrawScore(temp2, 65,5);
-		DrawScore(temp3, 69,5);
-	}
-
-	// 1.000<=score<=9.999
-	else if ((1000 <= score) && (score < 10000))
-	{
-		temp = score / 1000;
-		temp2 = (score - temp * 1000) / 100;
-		temp3 = (score - temp * 1000 - temp2 * 100) / 10;
-		temp4 = score % 10;
-		DrawScore(temp, 58,5);
-		DrawScore(temp2, 62,5);
-		DrawScore(temp3, 66,5);
-		DrawScore(temp4, 70,5);
-	}
-
-	//10.000<= score<99.999
-	else if ((10000 <= score) && (score < 100000))
-	{
-		temp = score / 10000;
-		temp2 = (score - temp * 10000) / 1000;
-		temp3 = (score - temp * 10000 - temp2 * 1000) / 100;
-		temp4 = (score - temp * 10000 - temp2 * 1000 - temp3 * 100) / 10;
-		temp5 = score % 10;
-		DrawScore(temp, 55,5);
-		DrawScore(temp2, 59,5);
-		DrawScore(temp3, 63,5);
-		DrawScore(temp4, 67,5);
-		DrawScore(temp5, 71,5);
-	}
-
-	// 100.000<=score<=999.999
-	else if ((100000 <= score) && (score < 1000000))
-	{
-		temp = score / 100000;
-		temp2 = (score - temp * 100000) / 10000;
-		temp3 = (score - temp * 100000 - temp2 * 10000) / 1000;
-		temp4 = (score - temp * 100000 - temp2 * 10000 - temp3 * 1000) / 100;
-		temp5 = (score - temp * 100000 - temp2 * 10000 - temp3 * 1000 - temp4 * 100) / 10;
-		temp6 = score % 10;
-		DrawScore(temp, 53,5);
-		DrawScore(temp2, 57,5);
-		DrawScore(temp3, 61,5);
-		DrawScore(temp4, 65,5);
-		DrawScore(temp5, 69,5);
-		DrawScore(temp6, 73,5);
-	}
-
-	//1.000.000<=score<=9.999.999
-	else if ((1000000<=score) && (score<10000000))
-	{
-		temp = score / 1000000;
-		temp2 = (score - temp * 1000000) / 100000;
-		temp3 = (score - temp * 1000000 - temp2 * 100000) / 10000;
-		temp4 = (score - temp * 1000000 - temp2 * 100000 - temp3 * 10000) / 1000;
-		temp5 = (score - temp * 1000000 - temp2 * 100000 - temp3 * 10000 - temp4 * 1000) / 100;
-		temp6 = (score - temp * 1000000 - temp2 * 100000 - temp3 * 10000 - temp4 * 1000 - temp5 * 100) / 10;
-		temp7 = score % 10;
-		DrawScore(temp, 51,5);
-		DrawScore(temp2, 55,5);
-		DrawScore(temp3, 59,5);
-		DrawScore(temp4, 63,5);
-		DrawScore(temp5, 67,5);
-		DrawScore(temp6, 71,5);
-		DrawScore(temp7, 75,5);
+		while (temp_score > 0)
+		{
+			t = temp_score % 10;
+			DrawScore(t, x - 3, 5);
+			x -= 4;
+			temp_score /= 10;
+		}
 	}
 }
 
-int BestScore()
+int ReadBestScore()
 {
 	std::ifstream infile("bestScore.txt");
 	if (!infile.is_open())
@@ -670,6 +571,11 @@ int BestScore()
 	if (infile.is_open())
 		infile >> bestScore;
 	infile.close();
+	return bestScore;
+}
+
+void SaveBestScore()
+{
 	if (score > bestScore)
 	{
 		bestScore = score;
@@ -678,11 +584,10 @@ int BestScore()
 			outfile << bestScore;
 		outfile.close();
 	}
-	return bestScore;
 }
 void GameOver()
 {
-	BestScore();
+	SaveBestScore();
 	while (gameOver)
 	{
 		int Temp;
