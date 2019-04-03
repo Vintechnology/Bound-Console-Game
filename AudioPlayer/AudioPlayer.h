@@ -11,4 +11,8 @@ namespace AudioPlayer {
 	void PauseMusic();
 	void ResumeMusic();
 	void CleanUp();
+	void IncreaseMusicVolume();
+	void DecreaseMusicVolume();
+	void IncreaseSFXVolume();
+	void DecreaseSFXVolume();
 }

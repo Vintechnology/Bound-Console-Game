@@ -38,4 +38,20 @@ namespace AudioPlayer {
 	{	//call after finished using
 		Mix_CloseAudio();
 	}
+	void IncreaseMusicVolume()
+	{
+		Mix_VolumeMusic(Mix_VolumeMusic(-1) + 1);
+	}
+	void DecreaseMusicVolume()
+	{
+		Mix_VolumeMusic(Mix_VolumeMusic(-1) - 1);
+	}
+	void IncreaseSFXVolume()
+	{
+		Mix_Volume(-1, Mix_Volume(-1, -1) + 1);
+	}
+	void DecreaseSFXVolume()
+	{
+		Mix_Volume(-1, Mix_Volume(-1, -1) - 1);
+	}
 }
