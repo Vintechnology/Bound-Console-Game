@@ -19,9 +19,9 @@ const int FONT_HEIGHT = 8;
 const int  GAME_WIDTH = 48;
 const int GAME_HEIGHT = 78;
 
-const int BALL_RADIUS = 1;
+const int BALL_RADIUS = 2;
 
-const int SPACE_WIDTH = 5;
+const int SPACE_WIDTH = 7;
 const int WALL_HEIGHT = 4;
 
 const int NUMBER_OF_WALLS = 4;
@@ -234,7 +234,7 @@ void Options()
 
 }
 
-void Credits()
+void Credits() // @GiaVinh: don't try to use color value. I'm not a good designer
 {	
 	ScreenBuffer::fillBuffer(32, 0);
 	Sprite Credits;
@@ -338,7 +338,7 @@ void ResetGame() {
 
 	//Section Heigth is just to know where to put the Obstacle in the first place. So if you change the Game Height, it won't appeared in weird position.
 	SectionHeigth = ((float)GAME_HEIGHT / NUMBER_OF_WALLS + 1) + 5;
-	
+	srand(time(NULL));
 	for (int i = 0; i < 3; i++)
 	{
 		Obstacle[i].passed = 0;
@@ -391,7 +391,6 @@ void GameLogic(float elapsedTime) {
 
 void ObstacleLogic(float fElapsedTime)
 {
-	srand(time(NULL));
 	for (int i = 0; i < 3; i++)
 	{
 		Obstacle[i].spaceY -= 8.0f*fElapsedTime; //this is to keep the Obstacle (Wall) going up
@@ -402,16 +401,11 @@ void ObstacleLogic(float fElapsedTime)
 			Obstacle[i].passed = 0; //this is to know that this wall is not passed.(after recycled)
 			Obstacle[3].spaceX = Obstacle[i].spaceX;
 			Obstacle[3].spaceY = Obstacle[i].spaceY;
-			Obstacle[i].spaceX = rand() % (GAME_WIDTH - SPACE_WIDTH);
+			Obstacle[i].spaceX = 1 + rand() % (GAME_WIDTH - SPACE_WIDTH - 1);
 			Obstacle[i].spaceY = GAME_HEIGHT - 1 + Obstacle[3].spaceY;
 		}
 		Obstacle[3].spaceY -= 6.0f*fElapsedTime;
 		
-		
-		while (Obstacle[i].spaceX < 3) //this is to make sure the Obstall Space wont touch the Left boder.
-		{
-			Obstacle[i].spaceX += 2;
-		}
 	}
 }
 
@@ -449,13 +443,15 @@ void Collision()
 {
 	for (int i = 0; i < NUMBER_OF_WALLS; i++)
 	{
-		if (Obstacle[i].spaceY - ball.y < BALL_RADIUS + 1 && Obstacle[i].spaceY - ball.y > -WALL_HEIGHT - BALL_RADIUS)
+		if (Obstacle[i].spaceY - ball.y <= BALL_RADIUS && Obstacle[i].spaceY - ball.y > -WALL_HEIGHT - BALL_RADIUS)
 		{
 			if (!(ball.x - Obstacle[i].spaceX > BALL_RADIUS - 0.5f && ball.x - Obstacle[i].spaceX < SPACE_WIDTH - BALL_RADIUS - 0.5f))
-				gameOver = 1;
+				gameOver = true;
 		}
 	}
+
 	if (ball.y < 1) gameOver = 1;
+
 	for (int i = 0; i < NUMBER_OF_WALLS; i++)
 	{
 		if (ball.y >= Obstacle[i].spaceY + WALL_HEIGHT && Obstacle[i].passed == 0)
@@ -661,7 +657,7 @@ void GameOver()
 		ScreenBuffer::drawString(26, 40, StrScore, 224);
 		ScreenBuffer::drawString(20, 42, "BEST", 224);
 		ScreenBuffer::drawString(26, 42, StrBest, 224);
-		ScreenBuffer::drawLine(4, 44, 45, 44, 223, 14); //@VinhPham: It's important for the text beneath
+		ScreenBuffer::drawLine(4, 44, 45, 44, 223, 14); //@TranTrung: you should use Color or else I won't know what color it is. Ask me if you need to know which color do these value represent for
 		ScreenBuffer::drawString(4, 45, "         PRESS ENTER TO CONTINUE          ", 14);
 		ScreenBuffer::drawToConsole();
 		while (_kbhit()) _getch(); //clear the input buffer
