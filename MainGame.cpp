@@ -241,26 +241,30 @@ void Credits() // @GiaVinh: don't try to use color value. I'm not a good designe
 	LoadSprite(Credits, "Bound-Console-Game/GameData/Credits/Credits.dat");
 	DrawSprite(Credits, 25, 5);
 	ScreenBuffer::drawString(10, 12, "____________________________________________________________");
-	ScreenBuffer::drawString(16, 14, "This game is a school project created by a group", 10);
-	ScreenBuffer::drawString(28, 15, "of first - year students", 10); 
-	ScreenBuffer::drawString(16, 17, "Bound is 100% a Command Line game which graphics", 10);
-	ScreenBuffer::drawString(19, 18, "are all characters and background coloring", 10);
-	ScreenBuffer::drawString(20, 20, "Console rendering was inspired by javidx9's", 10);
-	ScreenBuffer::drawString(27, 21, "olcConsoleGameEngine project", 10);
-	ScreenBuffer::drawString(31, 30, "LEADER", 3);
+	ScreenBuffer::drawString(16, 14, "This game is a school project created by a group", FG_GREEN);
+	ScreenBuffer::drawString(28, 15, "of first - year students", FG_GREEN);
+	ScreenBuffer::drawString(16, 17, "Bound is 100% a Command Line game which graphics", FG_GREEN);
+	ScreenBuffer::drawString(19, 18, "are all characters and background coloring", FG_GREEN);
+	ScreenBuffer::drawString(20, 20, "Console rendering was inspired by javidx9's", FG_GREEN);
+	ScreenBuffer::drawString(27, 21, "olcConsoleGameEngine project", FG_GREEN);
+	ScreenBuffer::drawString(31, 30, "LEADER", FG_DARK_CYAN);
 	ScreenBuffer::drawString(39, 30, "PHAM HONG VINH");
-	ScreenBuffer::drawString(29, 35, "DESIGNER", 3);
+	ScreenBuffer::drawString(29, 35, "DESIGNER", FG_DARK_CYAN);
 	ScreenBuffer::drawString(39, 35, "NGUYEN TRAN TRUNG");
-	ScreenBuffer::drawString(27, 40, "PROGRAMMER", 3);
+	ScreenBuffer::drawString(27, 40, "PROGRAMMER", FG_DARK_CYAN);
 	ScreenBuffer::drawString(39, 40, "VO TRONG GIA VINH");
 	ScreenBuffer::drawString(39, 42, "LE THANH VIET");
 	ScreenBuffer::drawString(39, 44, "BUI THANH UY");
-	ScreenBuffer::drawString(21, 50, "MUSIC/SFX SOURCE", 3);
+	ScreenBuffer::drawString(21, 50, "MUSIC/SFX SOURCE", FG_DARK_CYAN);
 	ScreenBuffer::drawString(39, 50, "FREESOUND.COM");
-	ScreenBuffer::drawString(25, 55, "LIBRARY USED", 3);
+	ScreenBuffer::drawString(25, 55, "LIBRARY USED", FG_DARK_CYAN);
 	ScreenBuffer::drawString(39, 55, "SDL2/MIXER");
+	ScreenBuffer::drawString(52, 75, "[ENTER]: RETURN TO MENU", FG_DARK_CYAN);
 	ScreenBuffer::drawToConsole();
-	_getch();
+	while (true)
+	{
+		if (GetAsyncKeyState(VK_RETURN) & 0x8000) break;
+	}
 	FreeSprite(Credits);
 }
 
@@ -272,8 +276,30 @@ void Help()
 	DrawSprite(Help, 32, 5);
 	FreeSprite(Help);
 	ScreenBuffer::drawString(10, 12, "____________________________________________________________");
+	ScreenBuffer::drawString(10, 20, "ABOUT BOUND:", FG_GREEN);
+	ScreenBuffer::drawString(24, 25, "Bound is an endless game, in which the goal is");
+	ScreenBuffer::drawString(24, 26, "to keep your character alive while navigating");
+	ScreenBuffer::drawString(24, 27, "through a series of obstacles. You wll get");
+	ScreenBuffer::drawString(24, 28, "point when passed an you obstacle. Game over");
+	ScreenBuffer::drawString(24, 29, "when your character hit the obstacles or the");
+	ScreenBuffer::drawString(24, 30, "game border.");
+	ScreenBuffer::drawString(10, 35, "HOW TO PLAY:", FG_GREEN);
+	ScreenBuffer::drawString(24, 40, "[ ]/[ ]: MOVE TO LEFT/RIGHT");
+	ScreenBuffer::draw(25, 40, 27); //draw left arrow
+	ScreenBuffer::draw(29, 40, 26); //draw right arrow
+	ScreenBuffer::drawString(24, 44, "[SPACE]: TO JUMP");
+	ScreenBuffer::drawString(10, 49, "TIPS:", FG_GREEN);
+	ScreenBuffer::drawString(24, 54, "JUMP TO REDUCE THE CHARACTER'S FALLING SPEED");
+	ScreenBuffer::drawString(24, 58, "GO THROUGH THE GAP WITHOUT JUMPING TO GET MORE");
+	ScreenBuffer::drawString(24, 59, "POINTS");
+	ScreenBuffer::drawString(24, 63, "YOU CAN CHANGE YOUR CHARACTER AND OBSTACLES");
+	ScreenBuffer::drawString(24, 64, "APPEARANCE AT THE OPTIONS MENU");
+	ScreenBuffer::drawString(52, 75, "[ENTER]: RETURN TO MENU", FG_DARK_CYAN);
 	ScreenBuffer::drawToConsole();
-	_getch();
+	while (true)
+	{
+		if (GetAsyncKeyState(VK_RETURN) & 0x8000) break;
+	}
 }
 
 int Menu() {
