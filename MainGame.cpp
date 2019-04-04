@@ -68,6 +68,8 @@ int MaxScore=9999999;
 int SectionHeigth;
 Ball ball;
 Wall Obstacle[NUMBER_OF_WALLS];
+int Obstacleupdate;
+int CaseUpdate;
 //Mix_Chunk *intro = Mix_LoadWAV("Bound-Console-Game/Music/Intro");
 
 
@@ -361,22 +363,23 @@ void ResetGame() {
 	score = 0;
 	ball.v = 0;
 	ball.passed = 0;
-
+	Obstacleupdate = NUMBER_OF_WALLS;
+	CaseUpdate = 1;
 	//Section Heigth is just to know where to put the Obstacle in the first place. So if you change the Game Height, it won't appeared in weird position.
 	SectionHeigth = ((float)GAME_HEIGHT / NUMBER_OF_WALLS + 1) + 5;
 	srand(time(NULL));
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < NUMBER_OF_WALLS - 1; i++)
 	{
 		Obstacle[i].passed = 0;
 		Obstacle[i].spaceX = rand() % (GAME_WIDTH - SPACE_WIDTH);
-		Obstacle[i].spaceY = (i + 3)*SectionHeigth;
+		Obstacle[i].spaceY = (i + NUMBER_OF_WALLS - 1)*SectionHeigth;
 		while (Obstacle[i].spaceX < 3)
 		{
 			Obstacle[i].spaceX = rand() % (GAME_WIDTH - SPACE_WIDTH);
 		}
 	}
-	Obstacle[3].spaceY = -15;
-	Obstacle[3].passed = 1;
+	Obstacle[NUMBER_OF_WALLS - 1].spaceY = -15;
+	Obstacle[NUMBER_OF_WALLS - 1].passed = 1;
 	}
 
 // === HANDLE PLAY INPUT ===
@@ -414,10 +417,33 @@ void GameLogic(float elapsedTime) {
 	DrawLogic();
 }
 
+void UpdateObstacle(float elapsedTime)
+{
+	if (Obstacleupdate == NUMBER_OF_WALLS || Obstacle[Obstacleupdate].spaceY < ball.y) //this is to make the Obstacle choosed won't be replace if we have go over it.
+	{
+		for (int i = 0; i < NUMBER_OF_WALLS; i++) //this is to take the name of the Obstacle that is lower than our Ball
+		{
+			if (Obstacle[i].spaceY > ball.y)
+			{
+				Obstacleupdate = i;
+				break;
+			}
+		}
+	}
+	if (Obstacle[Obstacleupdate].spaceX + SPACE_WIDTH  >= GAME_WIDTH) CaseUpdate = 2; 
+	if (Obstacle[Obstacleupdate].spaceX <= 0) CaseUpdate = 1;
+	
+		switch (CaseUpdate)
+		{
+		case 1: Obstacle[Obstacleupdate].spaceX += elapsedTime*14.0f; break;
+		case 2: Obstacle[Obstacleupdate].spaceX -= elapsedTime*14.0f; break;
+		}
+	
+}
 
 void ObstacleLogic(float fElapsedTime)
 {
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < NUMBER_OF_WALLS - 1; i++)
 	{
 		Obstacle[i].spaceY -= 8.0f*fElapsedTime; //this is to keep the Obstacle (Wall) going up
 		
@@ -425,14 +451,15 @@ void ObstacleLogic(float fElapsedTime)
 		if (Obstacle[i].spaceY <= 0) // this to make the transition of wall which touch the top border to the bottom border smother.
 		{
 			Obstacle[i].passed = 0; //this is to know that this wall is not passed.(after recycled)
-			Obstacle[3].spaceX = Obstacle[i].spaceX;
-			Obstacle[3].spaceY = Obstacle[i].spaceY;
+			Obstacle[NUMBER_OF_WALLS - 1].spaceX = Obstacle[i].spaceX;
+			Obstacle[NUMBER_OF_WALLS - 1].spaceY = Obstacle[i].spaceY;
 			Obstacle[i].spaceX = 1 + rand() % (GAME_WIDTH - SPACE_WIDTH - 1);
-			Obstacle[i].spaceY = GAME_HEIGHT - 1 + Obstacle[3].spaceY;
+			Obstacle[i].spaceY = GAME_HEIGHT - 1 + Obstacle[NUMBER_OF_WALLS - 1].spaceY;
 		}
-		Obstacle[3].spaceY -= 6.0f*fElapsedTime;
+		Obstacle[NUMBER_OF_WALLS - 1].spaceY -= 6.0f*fElapsedTime;
 		
 	}
+	if (score >= 1) UpdateObstacle(fElapsedTime); //Set any score you want, i put 1 to test easily.
 }
 
 void controlBall(float elapsedTime)
