@@ -33,6 +33,8 @@ void Init() {
 	LoadSprite(Logo_Outline, "Bound-Console-Game/GameData/Logo/Logo_Outline.dat");
 	LoadGameplayData();
 	LoadMenuData();
+	//
+	LoadSkin();
 }
 
 void Intro() {
@@ -292,9 +294,98 @@ void DrawMenu()
 	ScreenBuffer::drawToConsole();
 }
 
-void Options()
+void LoadSkin()
 {
+	//Flappy Bird Skin
+	LoadSprite(Skin1_Ball, "Bound-Console-Game/GameData/Skins/FlappyBird/Ball.dat");
+	LoadSprite(Skin1_LeftObs, "Bound-Console-Game/GameData/Skins/FlappyBird/Left_Obs.dat");
+	LoadSprite(Skin1_RightObs, "Bound-Console-Game/GameData/Skins/FlappyBird/Right_Obs.dat");
+	//Super Mario Skin
+	LoadSprite(Skin2_Ball, "Bound-Console-Game/GameData/Skins/SuperMario/Ball.dat");
+	LoadSprite(Skin2_LeftObs, "Bound-Console-Game/GameData/Skins/SuperMario/Left_Obs.dat");
+	LoadSprite(Skin2_RightObs, "Bound-Console-Game/GameData/Skins/SuperMario/Right_Obs.dat");
+	//Load Saved Data
+	std::ifstream SavedSkin("Bound-Console-Game/GameData/Skins/SavedSkin");
+	if (!SavedSkin.is_open())
+	{
+		std::ofstream out("Bound-Console-Game/GameData/Skins/SavedSkin");
+		out << 1 << std::endl;
+		out.close();
+		DefaultSkin = 1;
+	}else
+		SavedSkin >> DefaultSkin;
+	switch (DefaultSkin)
+	{
+	case 1:
+		SBall = &Skin1_Ball;
+		SLeftObs = &Skin1_LeftObs;
+		SRightObs = &Skin1_RightObs;
+		SkinName = "FLAPPY BIRD";
+		break;
+	case 2:
+		SBall = &Skin2_Ball;
+		SLeftObs = &Skin2_LeftObs;
+		SRightObs = &Skin2_RightObs;
+		SkinName = "SUPER MARIO";
+		break;
+	}
+	SavedSkin.close();
+}
 
+void Options()// Changed saveSkin directory to GameData/Skins 
+{
+	ScreenBuffer::fillBuffer(32, 0);
+	ScreenBuffer::drawLine(2, 40, 77, 40, 249, Color::FG_WHITE);
+	ScreenBuffer::drawString(9, 40, " SKIN ", Color::FG_GREEN);
+	ScreenBuffer::drawRect(2, 44, 24, 69, 249, Color::FG_WHITE);
+	ScreenBuffer::drawRect(28, 44, 77, 69, 249, Color::FG_WHITE);
+	ScreenBuffer::drawString(4, 46, "[1] FLAPPY BIRD", Color::FG_YELLOW);
+	ScreenBuffer::drawString(4, 48, "[2] SUPER MARIO", Color::FG_YELLOW);
+	ScreenBuffer::drawString(2, 71, "PRESS NUMBER KEY TO SELECT", Color::FG_BLUE);
+	ScreenBuffer::drawString(52, 75, "[ENTER]: RETURN TO MENU", FG_DARK_CYAN);
+	ScreenBuffer::drawToConsole();
+	//Default
+	DrawSprite(*SBall, 50, 49);
+	DrawCrop(*SLeftObs, 29, 58, 36, 0, 49, 6);
+	DrawCrop(*SRightObs, 53, 58, 0, 0, 23, 6);
+	ScreenBuffer::drawString(30, 46, SkinName, Color::FG_YELLOW);
+	ScreenBuffer::drawToConsole();
+	//
+	int Key;
+	while (true)
+	{
+		while (_kbhit()) _getch();
+		Key = _getch();
+		switch (Key)
+		{
+		case 0x31:
+			SBall = &Skin1_Ball;
+			SLeftObs = &Skin1_LeftObs;
+			SRightObs = &Skin1_RightObs;
+			SkinName = "FLAPPY BIRD";
+			DefaultSkin = 1;
+			break;
+		case 0x32:
+			SBall = &Skin2_Ball;
+			SLeftObs = &Skin2_LeftObs;
+			SRightObs = &Skin2_RightObs;
+			SkinName = "SUPER MARIO";
+			DefaultSkin = 2;
+			break;
+		case 13:
+			std::ofstream SavedSkin("Bound-Console-Game/GameData/Skins/SavedSkin");
+			SavedSkin << DefaultSkin;
+			SavedSkin.close();
+			return;
+		}
+		ScreenBuffer::fillRect(50, 49, 54, 53, 219, 0);
+		DrawSprite(*SBall, 50, 49);
+		DrawCrop(*SLeftObs, 29, 58, 36, 0, 49, 6);
+		DrawCrop(*SRightObs, 53, 58, 0, 0, 23, 6);
+		ScreenBuffer::drawLine(29, 45, 76, 45, 219, 0);
+		ScreenBuffer::drawString(30, 46, SkinName, Color::FG_YELLOW);
+		ScreenBuffer::drawToConsole();
+	}
 }
 
 void Credits() // @GiaVinh: don't try to use color value. I'm not a good designer
@@ -573,16 +664,15 @@ void DrawScore(int temp, int x, int y)
 
 int ReadBestScore()
 {
-	std::ifstream infile("bestScore.txt");
+	std::ifstream infile("Bound-Console-Game/GameData/bestScore");
 	if (!infile.is_open())
 	{
-		std::ofstream out("bestScore.txt");
+		std::ofstream out("Bound-Console-Game/GameData/bestScore");
 		out << 0 << std::endl;
 		out.close();
-		std::ifstream infile("bestScore.txt");
-		infile >> bestScore;
+		bestScore = 0;
 	}
-	if (infile.is_open())
+	else
 		infile >> bestScore;
 	infile.close();
 	return bestScore;
@@ -593,7 +683,7 @@ void SaveBestScore()
 	if (score > bestScore)
 	{
 		bestScore = score;
-		std::ofstream outfile("bestScore.txt");
+		std::ofstream outfile("Bound-Console-Game/GameData/bestScore");
 		if (outfile.is_open())
 			outfile << bestScore;
 		outfile.close();

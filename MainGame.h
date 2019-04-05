@@ -58,6 +58,17 @@ int Obstacleupdate;
 int CaseUpdate;
 //Mix_Chunk *intro = Mix_LoadWAV("Bound-Console-Game/Music/Intro");
 
+Sprite
+Skin1_Ball, Skin1_LeftObs, Skin1_RightObs, //Flappy Bird Skin
+Skin2_Ball, Skin2_LeftObs, Skin2_RightObs, //Super Mario Skin
+*SBall, *SLeftObs, *SRightObs; //Selected Skin
+
+std::string SkinName;
+
+int DefaultSkin;
+
+void LoadMenuData();
+void LoadSkin();
 
 Sprite Logo_Outline,
 		Menu_Play,
