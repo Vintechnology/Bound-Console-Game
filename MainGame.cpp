@@ -1,75 +1,4 @@
-﻿#include <iostream>
-#include <conio.h>
-#include <chrono>
-#include <fstream>
-#include <SDL_mixer.h>
-#include <SDL.h>
-#include "ScreenBuffer/ScreenBuffer.h"
-#include "ScreenBuffer/Color.h"
-#include "AudioPlayer/AudioPlayer.h"
-#include "SpriteRenderer/SpriteRenderer.h"
-#include "ControlBall.h"
-
-// === CONSTANTS DECLARE ===
-const int SCREEN_WIDTH = 80;
-const int SCREEN_HEIGHT = 80;
-
-const int FONT_WIDTH = 8;
-const int FONT_HEIGHT = 8;
-
-const int  GAME_WIDTH = 48;
-const int GAME_HEIGHT = 78;
-
-const int BALL_RADIUS = 2;
-
-const int SPACE_WIDTH = 7;
-const int WALL_HEIGHT = 4;
-
-const int NUMBER_OF_WALLS = 4;
-
-const int BALL_LIMIT = 50;
-
-const int KEY_P = 0x50;
-const int KEY_O = 0x4F;
-const int KEY_C = 0x43;
-const int KEY_H = 0x48;
-const int KEY_E = 0x45;
-
-
-// === ENUM DECLARE ===
-
-// === STRUCT DECLARE ===
-
-struct Wall {
-	float spaceX;
-	float spaceY;
-	bool passed = 0;
-};
-
-// === GLOBAL VARIABLES DECLARE===
-bool gameOver;
-int score= 0;
-int bestScore=0;
-int MaxScore=9999999;
-int SectionHeigth;
-Ball ball;
-Wall Obstacle[NUMBER_OF_WALLS];
-int Obstacleupdate;
-int CaseUpdate;
-//Mix_Chunk *intro = Mix_LoadWAV("Bound-Console-Game/Music/Intro");
-
-
-// === FUNCTION DECLARE ===
-void Intro();
-int Menu();
-void Init();
-void Depose();
-void ResetGame();
-void onGameUpdate(float elapsedTime);
-void UpdateAndShowScore();
-int ReadBestScore();
-void SaveBestScore();
-void GameOver();
+﻿#include "MainGame.h"
 
 int main(int argc, char* argv[]) {
 	Init();
@@ -96,47 +25,15 @@ int main(int argc, char* argv[]) {
 	return 0;
 }
 
-// -------- FUNCTIONS FOR STARTING STATE --------
-
-/*
-	Initialize global variables, loading game assets, records or something that will need to init once in program
-*/
-Sprite 
-Logo_Outline,
-Menu_Play,
-Menu_Options,
-Menu_Credits,
-Menu_Help,
-Menu_Exit;
-
-void LoadMenuData();
-
 void Init() {
 	ScreenBuffer::SetupBufferScreen(SCREEN_WIDTH, SCREEN_HEIGHT, FONT_WIDTH, FONT_HEIGHT);
 	// TODO: Load game asset
 	// Load Intro and Menu
 	AudioPlayer::initPlayer();
 	LoadSprite(Logo_Outline, "Bound-Console-Game/GameData/Logo/Logo_Outline.dat");
+	LoadGameplayData();
 	LoadMenuData();
 }
-
-/*
-	Depose global variables, game assets or something need to clean up when the program is done
-*/
-void Depose() {
-	ScreenBuffer::deposeBuffer();
-	// TODO: Free AudioPLayer
-	// TODO: Free game asset
-	// Free Menu assets
-	FreeSprite(Logo_Outline);
-	FreeSprite(Menu_Play);
-	FreeSprite(Menu_Options);
-	FreeSprite(Menu_Credits);
-	FreeSprite(Menu_Help);
-	FreeSprite(Menu_Exit);
-}
-
-// === INTRO ===
 
 void Intro() {
 	Sprite Black;
@@ -173,8 +70,149 @@ void Intro() {
 	FreeSprite(Black);
 }
 
-// === MENU ===
+int Menu() {//TODO: using getAsyncKeyState to handle input
+	AudioPlayer::PlayBackgroundMusic("Bound-Console-Game/GameData/Music/Menu.wav");
+	DrawMenu();
+	int Key;
+	while (true)
+	{
+		while (_kbhit()) {
+			_getch();//clear the input buffer
+		}
+		Key = _getch();
+		switch (Key)
+		{
+		case KEY_E + 32:
+		case KEY_E:
+			return 0;
 
+		case KEY_P + 32:
+		case KEY_P:
+			AudioPlayer::PauseMusic();
+			return 1;
+
+		case KEY_O + 32:
+		case KEY_O:
+			Options();
+			break;
+
+		case KEY_C + 32:
+		case KEY_C:
+			Credits();
+			break;
+
+		case KEY_H + 32:
+		case KEY_H:
+			Help();
+			break;
+		}
+		DrawMenu();
+	}
+}
+
+void ResetGame() {
+	// Initialize global variables
+	gameOver = false;
+	ball.x = 1 / 2.0f * GAME_WIDTH;
+	ball.y = 1 / 3.0f * GAME_HEIGHT;
+	score = 0;
+	ball.v = 0;
+	ball.passed = 0;
+	Obstacleupdate = NUMBER_OF_WALLS;
+	CaseUpdate = 1;
+	//Section Heigth is just to know where to put the Obstacle in the first place. So if you change the Game Height, it won't appeared in weird position.
+	SectionHeigth = ((float)GAME_HEIGHT / NUMBER_OF_WALLS + 1) + 5;
+	srand(time(NULL));
+	for (int i = 0; i < NUMBER_OF_WALLS - 1; i++)
+	{
+		Obstacle[i].passed = 0;
+		Obstacle[i].spaceX = rand() % (GAME_WIDTH - SPACE_WIDTH);
+		Obstacle[i].spaceY = (i + NUMBER_OF_WALLS - 1)*SectionHeigth;
+		while (Obstacle[i].spaceX < 3)
+		{
+			Obstacle[i].spaceX = rand() % (GAME_WIDTH - SPACE_WIDTH);
+		}
+	}
+	Obstacle[NUMBER_OF_WALLS - 1].spaceY = -15;
+	Obstacle[NUMBER_OF_WALLS - 1].passed = 1;
+}
+
+void onGameUpdate(float elapsedTime) {
+	GameHandleInput();
+	GameLogic(elapsedTime);
+	onGameDraw();
+}
+
+void GameOver()
+{
+	SaveBestScore();
+	while (gameOver)
+	{
+		int Temp;
+		std::string StrScore = "";
+		Temp = score;
+		if (score == 0)
+			StrScore = '0';
+		else
+		{
+			while (Temp > 0)
+			{
+				StrScore = (char)(Temp % 10 + 48) + StrScore;
+				Temp /= 10;
+			}
+		}
+
+		std::string StrBest = getStrFromInt(bestScore);
+
+		DrawSprite(Game_over, 3, 32);
+		ScreenBuffer::drawString(19, 40, "SCORE", 224);
+		ScreenBuffer::drawString(26, 40, StrScore, 224);
+		ScreenBuffer::drawString(20, 42, "BEST", 224);
+		ScreenBuffer::drawString(26, 42, StrBest, 224);
+		ScreenBuffer::drawLine(4, 44, 45, 44, 223, 14); //@TranTrung: you should use Color or else I won't know what color it is. Ask me if you need to know which color do these value represent for
+		ScreenBuffer::drawString(4, 45, "         PRESS ENTER TO CONTINUE          ", 14);
+		ScreenBuffer::drawToConsole();
+		while (_kbhit()) _getch(); //clear the input buffer
+		if (GetAsyncKeyState(VK_RETURN) & 0x8000) gameOver = 0;
+	}
+}
+
+void Depose() {
+	ScreenBuffer::deposeBuffer();
+	// TODO: Free AudioPLayer
+	// TODO: Free game asset
+	// Free Menu assets
+	FreeGameplayAsset();
+	FreeMenuAsset();
+}
+
+// -------- FUNCTIONS FOR STARTING STATE --------
+
+/*
+	Initialize global variables, loading game assets, records or something that will need to init once in program
+*/
+
+
+
+const char* scoreNumberAssetPath[10] = 
+{
+"Bound-Console-Game/GameData/Numbers/0.dat",
+"Bound-Console-Game/GameData/Numbers/1.dat",
+"Bound-Console-Game/GameData/Numbers/2.dat",
+"Bound-Console-Game/GameData/Numbers/3.dat",
+"Bound-Console-Game/GameData/Numbers/4.dat",
+"Bound-Console-Game/GameData/Numbers/5.dat",
+"Bound-Console-Game/GameData/Numbers/6.dat",
+"Bound-Console-Game/GameData/Numbers/7.dat",
+"Bound-Console-Game/GameData/Numbers/8.dat",
+"Bound-Console-Game/GameData/Numbers/9.dat"
+};
+void LoadGameplayData() {
+	for(int i=0;i<10;i++)
+		LoadSprite(scoreNumbers[i], scoreNumberAssetPath[i]);
+
+	LoadSprite(Game_over, "Bound-Console-Game/GameData/GameOver/GameOver.dat");
+}
 
 
 void LoadMenuData()
@@ -184,6 +222,54 @@ void LoadMenuData()
 	LoadSprite(Menu_Credits, "Bound-Console-Game/GameData/Menu/Menu_Credits.dat");
 	LoadSprite(Menu_Help, "Bound-Console-Game/GameData/Menu/Menu_Help.dat");
 	LoadSprite(Menu_Exit, "Bound-Console-Game/GameData/Menu/Menu_Exit.dat");
+
+
+	LoadSprite(Label_Credits, "Bound-Console-Game/GameData/Credits/Credits.dat");
+	LoadSprite(Label_Help, "Bound-Console-Game/GameData/Help/Help.dat");
+}
+
+
+/*
+	Depose global variables, game assets or something need to clean up when the program is done
+*/
+
+
+void FreeMenuAsset() {
+	FreeSprite(Logo_Outline);
+	FreeSprite(Menu_Play);
+	FreeSprite(Menu_Options);
+	FreeSprite(Menu_Credits);
+	FreeSprite(Menu_Help);
+	FreeSprite(Menu_Exit);
+
+	FreeSprite(Label_Credits);
+	FreeSprite(Label_Help);
+}
+
+void FreeGameplayAsset() {
+	for (int i = 0; i < 10; i++)
+		FreeSprite(scoreNumbers[i]);
+
+	FreeSprite(Game_over);
+}
+
+// === INTRO ===
+
+// === MENU ===
+std::string getStrFromInt(int number) {
+	std::string Score = "";
+	int Temp = bestScore;
+	if (bestScore == 0)
+		Score = '0';
+	else
+	{
+		while (Temp > 0)
+		{
+			Score = (char)(Temp % 10 + 48) + Score;
+			Temp /= 10;
+		}
+	}
+	return Score;
 }
 
 void DrawMenu()
@@ -201,18 +287,7 @@ void DrawMenu()
 	//Get Best Score from file txt to show in Menu
 	ReadBestScore();
 
-	std::string Score = "";
-	int Temp = bestScore;
-	if(bestScore==0)
-		Score='0';
-	else
-	{
-		while (Temp > 0)
-		{
-			Score = (char)(Temp % 10 + 48) + Score;
-			Temp /= 10;
-		}
-	}
+	std::string Score = getStrFromInt(bestScore);
 	ScreenBuffer::drawString(41, 25, Score, 10);
 	ScreenBuffer::drawToConsole();
 }
@@ -223,18 +298,16 @@ void Options()
 }
 
 void Credits() // @GiaVinh: don't try to use color value. I'm not a good designer
-{	
+{
 	ScreenBuffer::fillBuffer(32, 0);
-	Sprite Credits;
-	LoadSprite(Credits, "Bound-Console-Game/GameData/Credits/Credits.dat");
-	DrawSprite(Credits, 25, 5);
+	DrawSprite(Label_Credits, 25, 5);
 	ScreenBuffer::drawString(10, 12, "____________________________________________________________");
-	ScreenBuffer::drawString(16, 14, "This game is a school project created by a group", FG_GREEN);
-	ScreenBuffer::drawString(28, 15, "of first - year students", FG_GREEN);
-	ScreenBuffer::drawString(16, 17, "Bound is 100% a Command Line game which graphics", FG_GREEN);
-	ScreenBuffer::drawString(19, 18, "are all characters and background coloring", FG_GREEN);
-	ScreenBuffer::drawString(20, 20, "Console rendering was inspired by javidx9's", FG_GREEN);
-	ScreenBuffer::drawString(27, 21, "olcConsoleGameEngine project", FG_GREEN);
+	ScreenBuffer::drawString(16, 14, "THIS GAME IS A SCHOOL PROJECT CREATED BY A GROUP", FG_GREEN);
+	ScreenBuffer::drawString(28, 15, "OF FIRST-YEAR STUDENTS", FG_GREEN);
+	ScreenBuffer::drawString(16, 17, "BOUND IS 100% A COMMAND LINE GAME WHICH GRAPHICS", FG_GREEN);
+	ScreenBuffer::drawString(19, 18, "ARE ALL CHARACTERS AND BACKGROUND COLORING", FG_GREEN);
+	ScreenBuffer::drawString(20, 20, "CONSOLE RENDERING WAS INSPIRED BY JAVIDX9'S", FG_GREEN);
+	ScreenBuffer::drawString(27, 21, "OLCCONSOLEGAMEENGINE PROJECT", FG_GREEN);
 	ScreenBuffer::drawString(31, 30, "LEADER", FG_DARK_CYAN);
 	ScreenBuffer::drawString(39, 30, "PHAM HONG VINH");
 	ScreenBuffer::drawString(29, 35, "DESIGNER", FG_DARK_CYAN);
@@ -253,16 +326,12 @@ void Credits() // @GiaVinh: don't try to use color value. I'm not a good designe
 	{
 		if (GetAsyncKeyState(VK_RETURN) & 0x8000) break;
 	}
-	FreeSprite(Credits);
 }
 
 void Help()
 {
 	ScreenBuffer::fillBuffer(32, 0);
-	Sprite Help;
-	LoadSprite(Help, "Bound-Console-Game/GameData/Help/Help.dat");
-	DrawSprite(Help, 32, 5);
-	FreeSprite(Help);
+	DrawSprite(Label_Help, 32, 5);
 	ScreenBuffer::drawString(10, 12, "____________________________________________________________");
 	ScreenBuffer::drawString(10, 20, "ABOUT BOUND:", FG_GREEN);
 	ScreenBuffer::drawString(24, 25, "Bound is an endless game, in which the goal is");
@@ -290,46 +359,6 @@ void Help()
 	}
 }
 
-int Menu() {
-	AudioPlayer::PlayBackgroundMusic("Bound-Console-Game/GameData/Music/Menu.wav");
-	DrawMenu();
-	int Key;
-	while (true)
-	{
-		while (_kbhit()) _getch(); //clear the input buffer
-		Key = _getch();
-		switch (Key)
-		{
-		case KEY_E + 32:
-		case KEY_E:
-			return 0;
-
-		case KEY_P + 32:
-		case KEY_P:
-			AudioPlayer::PauseMusic();
-			return 1;
-
-		case KEY_O + 32:
-		case KEY_O:
-			Options();
-			DrawMenu();
-			break;
-
-		case KEY_C + 32:
-		case KEY_C:
-			Credits();
-			DrawMenu();
-			break;
-
-		case KEY_H + 32:
-		case KEY_H:
-			Help();
-			DrawMenu();
-			break;
-		}
-	}
-}
-
 
 
 // -------- FUNCTIONS FOR PLAYING STATE --------
@@ -337,33 +366,6 @@ int Menu() {
 /*
 	Getting ready to start the game again. Reset/ Init ball XY or score,...
 */
-void ResetGame() {
-	// Initialize global variables
-	gameOver = false;
-	ball.x = 1 / 2.0f * GAME_WIDTH;
-	ball.y = 1 / 3.0f * GAME_HEIGHT;
-	score = 0;
-	ball.v = 0;
-	ball.passed = 0;
-	Obstacleupdate = NUMBER_OF_WALLS;
-	CaseUpdate = 1;
-	//Section Heigth is just to know where to put the Obstacle in the first place. So if you change the Game Height, it won't appeared in weird position.
-	SectionHeigth = ((float)GAME_HEIGHT / NUMBER_OF_WALLS + 1) + 5;
-	srand(time(NULL));
-	for (int i = 0; i < NUMBER_OF_WALLS - 1; i++)
-	{
-		Obstacle[i].passed = 0;
-		Obstacle[i].spaceX = rand() % (GAME_WIDTH - SPACE_WIDTH);
-		Obstacle[i].spaceY = (i + NUMBER_OF_WALLS - 1)*SectionHeigth;
-		while (Obstacle[i].spaceX < 3)
-		{
-			Obstacle[i].spaceX = rand() % (GAME_WIDTH - SPACE_WIDTH);
-		}
-	}
-	Obstacle[NUMBER_OF_WALLS - 1].spaceY = -15;
-	Obstacle[NUMBER_OF_WALLS - 1].passed = 1;
-	}
-
 // === HANDLE PLAY INPUT ===
 void GameHandleInput() {
 	leftPressed=0;
@@ -386,10 +388,6 @@ void GameHandleInput() {
 }
 
 // === PLAY LOGIC ===
-void ObstacleLogic(float fElapsedTime);
-void Collision();
-void DrawLogic();
-void DrawScore(int temp,int x,int y);
 
 void GameLogic(float elapsedTime) {
 	controlBall(elapsedTime,ball);
@@ -440,7 +438,7 @@ void ObstacleLogic(float fElapsedTime)
 		Obstacle[NUMBER_OF_WALLS - 1].spaceY -= 6.0f*fElapsedTime;
 		
 	}
-	if (score >= 1) UpdateObstacle(fElapsedTime); //Set any score you want, i put 1 to test easily.
+	if (score >= 20) UpdateObstacle(fElapsedTime); //Set any score you want, i put 1 to test easily.
 }
 
 void DrawLogic()
@@ -471,14 +469,15 @@ void Collision()
 		}
 	}
 
-	if (ball.y < 1) gameOver = 1;
+	if (ball.y < 1) gameOver = true;
 
 	for (int i = 0; i < NUMBER_OF_WALLS; i++)
 	{
 		if (ball.y >= Obstacle[i].spaceY + WALL_HEIGHT && Obstacle[i].passed == 0)
 		{
 			AudioPlayer::PlayEffect("Bound-Console-Game/GameData/Music/Point.wav");
-			score+=pow(2.0, ball.passed);
+			//score+=2*ball.passed;
+			score++;
 			Obstacle[i].passed = 1;
 			ball.passed++;
 		}
@@ -486,50 +485,14 @@ void Collision()
 }
 
 // === PLAY DRAW ===
-void drawHUD() {
 
-	ScreenBuffer::drawRect(0, 0, GAME_WIDTH + 1, GAME_HEIGHT + 1, 219, 15);
-	//
-	
-	ScreenBuffer::drawLine(52, 1, 77, 1, 4, Color::FG_GREEN);
-	ScreenBuffer::drawString(61, 1, " SCORE ", Color::FG_GREEN);
-	//ScreenBuffer::drawString(52, 12, "BONUS +2", 14);
-	ScreenBuffer::drawString(52, 15, "BEST: 123", 10);
-	//
-	ScreenBuffer::drawLine(52, 19, 77, 19, 4, Color::FG_CYAN);
-	ScreenBuffer::drawString(60, 19, " CONTROL ", Color::FG_CYAN);
-	ScreenBuffer::drawString(52, 23, "[SPACE] TO JUMP", 11);
-	ScreenBuffer::drawString(52, 26, "[ ]/[ ] TO MOVE LEFT/RIGHT", 11);
-	ScreenBuffer::draw(53, 26, 27, 11); ScreenBuffer::draw(57, 26, 26, 11);
-	//
-	ScreenBuffer::drawLine(52, 30, 77, 30, 4, Color::FG_YELLOW);
-	ScreenBuffer::drawString(62, 30, " TIPS ", Color::FG_YELLOW);
-	ScreenBuffer::drawString(52, 34, "GO THROUGH THE GAP WITHOUT", Color::FG_YELLOW);
-	ScreenBuffer::drawString(52, 36, "JUMPING TO GET MORE POINT", Color::FG_YELLOW);
-	ScreenBuffer::drawString(52, 39, "JUMP TO REDUCE THE", Color::FG_YELLOW);
-	ScreenBuffer::drawString(52, 41, "CHARACTER'S FALLING SPEED", Color::FG_YELLOW);
-	ScreenBuffer::drawString(52, 44, "YOU CAN CHANGE YOUR", Color::FG_YELLOW);
-	ScreenBuffer::drawString(52, 46, "CHARACTER'S SKIN AT", Color::FG_YELLOW);
-	ScreenBuffer::drawString(52, 48, "MENU/OPTIONS", Color::FG_DARK_YELLOW);
-	//
-	ScreenBuffer::drawString(59, 78, "BOUND GAME VER. 1.0", Color::FG_RED);
-	//TODO: Draw score
 
-	UpdateAndShowScore();
-}
 
-void drawStage(int originX, int originY, int maxX, int maxY) {
+/*
+	The update loop of our game
+*/
 
-	ScreenBuffer::fillRect(originX + ball.x-BALL_RADIUS + 0.5f, originY + ball.y-BALL_RADIUS + 0.5f, originX + ball.x + BALL_RADIUS + 0.5f, originY + ball.y + BALL_RADIUS + 0.5f,' ', Color::BG_RED);
-	for (int i = 0; i < NUMBER_OF_WALLS; i++) {
-		int drawSpaceX = Obstacle[i].spaceX + 0.5f;
-		int drawSpaceY = Obstacle[i].spaceY + 0.5f;
-		ScreenBuffer::fillRect(originX, originY + drawSpaceY, originX + drawSpaceX - 1, originY + drawSpaceY + WALL_HEIGHT - 1, ' ', Color::BG_DARK_GREY);
-		ScreenBuffer::fillRect(originX + drawSpaceX + SPACE_WIDTH, originY + drawSpaceY, maxX, originY + drawSpaceY + WALL_HEIGHT - 1, ' ', Color::BG_DARK_GREY);
-	}
-}
-
-void GameDraw() {
+void onGameDraw() {
 	// TODO: Add a padding variables. Too many mysterious numbers
 
 	//Clear the whole screen
@@ -540,74 +503,49 @@ void GameDraw() {
 	drawHUD();
 }
 
-/*
-	The update loop of our game
-*/
+void drawHUD() {
 
-void onGameUpdate(float elapsedTime) {
-	GameHandleInput();
-	GameLogic(elapsedTime);
-	GameDraw();
+	ScreenBuffer::drawRect(0, 0, GAME_WIDTH + 1, GAME_HEIGHT + 1, 219, 15);
+
+	ScreenBuffer::drawLine(52, 1, 77, 1, 4, Color::FG_GREEN);
+	ScreenBuffer::drawString(61, 1, " SCORE ", Color::FG_GREEN);
+	//ScreenBuffer::drawString(52, 12, "BONUS +2", 14);
+	std::string bestScoreStr = getStrFromInt(bestScore);
+	ScreenBuffer::drawString(52, 15, "BEST: "+bestScoreStr, 10);
+
+	ScreenBuffer::drawLine(52, 19, 77, 19, 4, Color::FG_CYAN);
+	ScreenBuffer::drawString(60, 19, " CONTROL ", Color::FG_CYAN);
+	ScreenBuffer::drawString(52, 23, "[SPACE] TO JUMP", 11);
+	ScreenBuffer::drawString(52, 26, "[ ]/[ ] TO MOVE LEFT/RIGHT", 11);
+	ScreenBuffer::draw(53, 26, 27, 11); ScreenBuffer::draw(57, 26, 26, 11);
+
+	ScreenBuffer::drawLine(52, 30, 77, 30, 4, Color::FG_YELLOW);
+	ScreenBuffer::drawString(62, 30, " TIPS ", Color::FG_YELLOW);
+	ScreenBuffer::drawString(52, 34, "GO THROUGH THE GAP WITHOUT", Color::FG_YELLOW);
+	ScreenBuffer::drawString(52, 36, "JUMPING TO GET MORE POINT", Color::FG_YELLOW);
+	ScreenBuffer::drawString(52, 39, "JUMP TO REDUCE THE", Color::FG_YELLOW);
+	ScreenBuffer::drawString(52, 41, "CHARACTER'S FALLING SPEED", Color::FG_YELLOW);
+	ScreenBuffer::drawString(52, 44, "YOU CAN CHANGE YOUR", Color::FG_YELLOW);
+	ScreenBuffer::drawString(52, 46, "CHARACTER'S SKIN AT", Color::FG_YELLOW);
+	ScreenBuffer::drawString(52, 48, "MENU/OPTIONS", Color::FG_DARK_YELLOW);
+
+	ScreenBuffer::drawString(59, 78, "BOUND GAME VER. 1.0", Color::FG_RED);
+
+	UpdateAndShowScore();
 }
 
-void DrawScore(int temp,int x,int y)
-{
-	Sprite numb[10];
-	LoadSprite(numb[0], "Bound-Console-Game/GameData/Numbers/0.dat");
-	LoadSprite(numb[1], "Bound-Console-Game/GameData/Numbers/1.dat");
-	LoadSprite(numb[2], "Bound-Console-Game/GameData/Numbers/2.dat");
-	LoadSprite(numb[3], "Bound-Console-Game/GameData/Numbers/3.dat");
-	LoadSprite(numb[4], "Bound-Console-Game/GameData/Numbers/4.dat");
-	LoadSprite(numb[5], "Bound-Console-Game/GameData/Numbers/5.dat");
-	LoadSprite(numb[6], "Bound-Console-Game/GameData/Numbers/6.dat");
-	LoadSprite(numb[7], "Bound-Console-Game/GameData/Numbers/7.dat");
-	LoadSprite(numb[8], "Bound-Console-Game/GameData/Numbers/8.dat");
-	LoadSprite(numb[9], "Bound-Console-Game/GameData/Numbers/9.dat");
+void drawStage(int originX, int originY, int maxX, int maxY) {
 
-	switch (temp)
-	{
-	case 0:
-		DrawSprite(numb[0], x, y);
-		FreeSprite(numb[0]);
-		break;
-	case 1:
-		DrawSprite(numb[1], x, y);
-		FreeSprite(numb[1]);
-		break;
-	case 2:
-		DrawSprite(numb[2], x, y);
-		FreeSprite(numb[2]);
-		break;
-	case 3:
-		DrawSprite(numb[3], x, y);
-		FreeSprite(numb[3]);
-		break;
-	case 4:
-		DrawSprite(numb[4], x, y);
-		FreeSprite(numb[4]);
-		break;
-	case 5:
-		DrawSprite(numb[5], x, y);
-		FreeSprite(numb[5]);
-		break;
-	case 6:
-		DrawSprite(numb[6], x, y);
-		FreeSprite(numb[6]);
-		break;
-	case 7:
-		DrawSprite(numb[7], x, y);
-		FreeSprite(numb[7]);
-		break;
-	case 8:
-		DrawSprite(numb[8], x, y);
-		FreeSprite(numb[8]);
-		break;
-	case 9:
-		DrawSprite(numb[9], x, y);
-		FreeSprite(numb[9]);
-		break;
+	ScreenBuffer::fillRect(originX + ball.x - BALL_RADIUS + 0.5f, originY + ball.y - BALL_RADIUS + 0.5f, originX + ball.x + BALL_RADIUS + 0.5f, originY + ball.y + BALL_RADIUS + 0.5f, ' ', Color::BG_RED);
+	for (int i = 0; i < NUMBER_OF_WALLS; i++) {
+		int drawSpaceX = Obstacle[i].spaceX + 0.5f;
+		int drawSpaceY = Obstacle[i].spaceY + 0.5f;
+		ScreenBuffer::fillRect(originX, originY + drawSpaceY, originX + drawSpaceX - 1, originY + drawSpaceY + WALL_HEIGHT - 1, ' ', Color::BG_DARK_GREY);
+		ScreenBuffer::fillRect(originX + drawSpaceX + SPACE_WIDTH, originY + drawSpaceY, maxX, originY + drawSpaceY + WALL_HEIGHT - 1, ' ', Color::BG_DARK_GREY);
 	}
 }
+
+
 void UpdateAndShowScore()
 {
 	int temp_score;
@@ -626,6 +564,11 @@ void UpdateAndShowScore()
 			temp_score /= 10;
 		}
 	}
+}
+
+void DrawScore(int temp, int x, int y)
+{
+	DrawSprite(scoreNumbers[temp], x, y);
 }
 
 int ReadBestScore()
@@ -654,53 +597,6 @@ void SaveBestScore()
 		if (outfile.is_open())
 			outfile << bestScore;
 		outfile.close();
-	}
-}
-void GameOver()
-{
-	SaveBestScore();
-	while (gameOver)
-	{
-		int Temp;
-		std::string StrScore = "";
-		Temp = score;
-		if (score == 0)
-			StrScore = '0';
-		else
-		{
-			while (Temp > 0)
-			{
-				StrScore = (char)(Temp % 10 + 48) + StrScore;
-				Temp /= 10;
-			}
-		}
-		
-		std::string StrBest = "";
-		Temp = bestScore;
-		if (bestScore == 0)
-			StrBest = '0';
-		else
-		{
-			while (Temp > 0)
-			{
-				StrBest = (char)(Temp % 10 + 48) + StrBest;
-				Temp /= 10;
-			}
-		}
-		
-		Sprite Game_over;
-		LoadSprite(Game_over, "Bound-Console-Game/GameData/GameOver/GameOver.dat");
-		DrawSprite(Game_over, 3, 32);
-		FreeSprite(Game_over);
-		ScreenBuffer::drawString(19, 40, "SCORE", 224);
-		ScreenBuffer::drawString(26, 40, StrScore, 224);
-		ScreenBuffer::drawString(20, 42, "BEST", 224);
-		ScreenBuffer::drawString(26, 42, StrBest, 224);
-		ScreenBuffer::drawLine(4, 44, 45, 44, 223, 14); //@TranTrung: you should use Color or else I won't know what color it is. Ask me if you need to know which color do these value represent for
-		ScreenBuffer::drawString(4, 45, "         PRESS ENTER TO CONTINUE          ", 14);
-		ScreenBuffer::drawToConsole();
-		while (_kbhit()) _getch(); //clear the input buffer
-		if (GetAsyncKeyState(VK_RETURN) & 0x8000) gameOver = 0;
 	}
 }
 
