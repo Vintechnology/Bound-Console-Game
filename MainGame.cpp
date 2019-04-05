@@ -316,7 +316,6 @@ int Menu() {
 		{
 		case KEY_E + 32:
 		case KEY_E:
-			AudioPlayer::PauseMusic();
 			return 0;
 
 		case KEY_P + 32:
@@ -326,21 +325,18 @@ int Menu() {
 
 		case KEY_O + 32:
 		case KEY_O:
-			AudioPlayer::PauseMusic();
 			Options();
 			DrawMenu();
 			break;
 
 		case KEY_C + 32:
 		case KEY_C:
-			AudioPlayer::PauseMusic();
 			Credits();
 			DrawMenu();
 			break;
 
 		case KEY_H + 32:
 		case KEY_H:
-			AudioPlayer::PauseMusic();
 			Help();
 			DrawMenu();
 			break;
@@ -413,8 +409,8 @@ void DrawScore(int temp,int x,int y);
 void GameLogic(float elapsedTime) {
 	controlBall(elapsedTime);
 	ObstacleLogic(elapsedTime);
-	Collision();
 	DrawLogic();
+	Collision();
 }
 
 void UpdateObstacle(float elapsedTime)
@@ -494,11 +490,16 @@ void DrawLogic()
 
 void Collision()
 {
+	int xball, yball, xspace, yspace;
 	for (int i = 0; i < NUMBER_OF_WALLS; i++)
 	{
-		if (Obstacle[i].spaceY - ball.y <= BALL_RADIUS && Obstacle[i].spaceY - ball.y > -WALL_HEIGHT - BALL_RADIUS)
+		xball = ball.x + 0.5f;
+		yball = ball.y + 0.5f;
+		xspace = Obstacle[i].spaceX + 0.5f;
+		yspace = Obstacle[i].spaceY + 0.5f;
+		if (yspace - yball <= BALL_RADIUS && yspace - yball > -WALL_HEIGHT - BALL_RADIUS)
 		{
-			if (!(ball.x - Obstacle[i].spaceX > BALL_RADIUS - 0.5f && ball.x - Obstacle[i].spaceX < SPACE_WIDTH - BALL_RADIUS - 0.5f))
+			if (!(xball - xspace > BALL_RADIUS - 1 && xball - xspace < SPACE_WIDTH - BALL_RADIUS))
 				gameOver = true;
 		}
 	}
