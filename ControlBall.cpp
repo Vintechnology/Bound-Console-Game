@@ -11,6 +11,7 @@ void controlBall(float elapsedTime, Ball &ball)
 {
 	if (spacePressed)
 	{
+		ball.passed = 0;
 		ball.v = -g / 1.3f;
 		AudioPlayer::PlayEffect("Bound-Console-Game/GameData/Music/Jump.wav");
 	}

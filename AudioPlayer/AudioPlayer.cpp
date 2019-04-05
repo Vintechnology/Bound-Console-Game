@@ -6,10 +6,8 @@ namespace AudioPlayer {
 	void initPlayer()
 	{ 
 		Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
-		if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1)
-		{
-			cout << Mix_GetError();// Do something else
-		}
+		Mix_Volume(-1, 128);
+		Mix_VolumeMusic(128);
 	}
 
 	void PlayBackgroundMusic(string file)
@@ -38,20 +36,12 @@ namespace AudioPlayer {
 	{	//call after finished using
 		Mix_CloseAudio();
 	}
-	void IncreaseMusicVolume()
+	void SetMusicVolume(int volume)
 	{
-		Mix_VolumeMusic(Mix_VolumeMusic(-1) + 1);
+		Mix_VolumeMusic(volume*1.28);
 	}
-	void DecreaseMusicVolume()
+	void SetSFXVolume(int volume)
 	{
-		Mix_VolumeMusic(Mix_VolumeMusic(-1) - 1);
-	}
-	void IncreaseSFXVolume()
-	{
-		Mix_Volume(-1, Mix_Volume(-1, -1) + 1);
-	}
-	void DecreaseSFXVolume()
-	{
-		Mix_Volume(-1, Mix_Volume(-1, -1) - 1);
+		Mix_Volume(-1, volume*128);
 	}
 }
