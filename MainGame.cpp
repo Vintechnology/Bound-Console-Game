@@ -520,13 +520,31 @@ void Collision()
 // === PLAY DRAW ===
 void drawHUD() {
 
-	/*ScreenBuffer::drawLine(0, 0, SCREEN_WIDTH - 1, 0, ' ', Color::BG_WHITE);
-	ScreenBuffer::drawLine(0, 0, 0, SCREEN_HEIGHT - 1, ' ', Color::BG_WHITE);
-	ScreenBuffer::drawLine(0, SCREEN_HEIGHT - 1, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1, ' ', Color::BG_WHITE);
-	ScreenBuffer::drawLine(SCREEN_WIDTH - 1, 0, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1, ' ', Color::BG_WHITE);
-
-	ScreenBuffer::drawLine(GAME_WIDTH + 1, 0, GAME_WIDTH + 1, SCREEN_HEIGHT - 1, ' ', Color::BG_WHITE);*/
 	ScreenBuffer::drawRect(0, 0, GAME_WIDTH + 1, GAME_HEIGHT + 1, 219, 15);
+	//
+	
+	ScreenBuffer::drawLine(52, 1, 77, 1, 4, Color::FG_GREEN);
+	ScreenBuffer::drawString(61, 1, " SCORE ", Color::FG_GREEN);
+	//ScreenBuffer::drawString(52, 12, "BONUS +2", 14);
+	ScreenBuffer::drawString(52, 15, "BEST: 123", 10);
+	//
+	ScreenBuffer::drawLine(52, 19, 77, 19, 4, Color::FG_CYAN);
+	ScreenBuffer::drawString(60, 19, " CONTROL ", Color::FG_CYAN);
+	ScreenBuffer::drawString(52, 23, "[SPACE] TO JUMP", 11);
+	ScreenBuffer::drawString(52, 26, "[ ]/[ ] TO MOVE LEFT/RIGHT", 11);
+	ScreenBuffer::draw(53, 26, 27, 11); ScreenBuffer::draw(57, 26, 26, 11);
+	//
+	ScreenBuffer::drawLine(52, 30, 77, 30, 4, Color::FG_YELLOW);
+	ScreenBuffer::drawString(62, 30, " TIPS ", Color::FG_YELLOW);
+	ScreenBuffer::drawString(52, 34, "GO THROUGH THE GAP WITHOUT", Color::FG_YELLOW);
+	ScreenBuffer::drawString(52, 36, "JUMPING TO GET MORE POINT", Color::FG_YELLOW);
+	ScreenBuffer::drawString(52, 39, "JUMP TO REDUCE THE", Color::FG_YELLOW);
+	ScreenBuffer::drawString(52, 41, "CHARACTER'S FALLING SPEED", Color::FG_YELLOW);
+	ScreenBuffer::drawString(52, 44, "YOU CAN CHANGE YOUR", Color::FG_YELLOW);
+	ScreenBuffer::drawString(52, 46, "CHARACTER'S SKIN AT", Color::FG_YELLOW);
+	ScreenBuffer::drawString(52, 48, "MENU/OPTIONS", Color::FG_DARK_YELLOW);
+	//
+	ScreenBuffer::drawString(59, 78, "BOUND GAME VER. 1.0", Color::FG_RED);
 	//TODO: Draw score
 
 	UpdateAndShowScore();
