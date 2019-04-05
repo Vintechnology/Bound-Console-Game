@@ -8,6 +8,7 @@
 #include "ScreenBuffer/Color.h"
 #include "AudioPlayer/AudioPlayer.h"
 #include "SpriteRenderer/SpriteRenderer.h"
+#include "ControlBall.h"
 
 // === CONSTANTS DECLARE ===
 const int SCREEN_WIDTH = 80;
@@ -34,25 +35,10 @@ const int KEY_C = 0x43;
 const int KEY_H = 0x48;
 const int KEY_E = 0x45;
 
-const float g=30.0f;	//Gravity
-
-// === Declare for Input ===
-int next_space=0;
-int pre_space=0;
-int spacePressed;
-int leftPressed;
-int rightPressed;
 
 // === ENUM DECLARE ===
 
 // === STRUCT DECLARE ===
-struct Ball {
-	float x;
-	float y;
-	int passed = 0;
-	float v=0.0f;	//Velocity
-	// Add something if you need
-};
 
 struct Wall {
 	float spaceX;
@@ -401,13 +387,12 @@ void GameHandleInput() {
 
 // === PLAY LOGIC ===
 void ObstacleLogic(float fElapsedTime);
-void controlBall(float elapsedTime); 
 void Collision();
 void DrawLogic();
 void DrawScore(int temp,int x,int y);
 
 void GameLogic(float elapsedTime) {
-	controlBall(elapsedTime);
+	controlBall(elapsedTime,ball);
 	ObstacleLogic(elapsedTime);
 	DrawLogic();
 	Collision();
@@ -456,24 +441,6 @@ void ObstacleLogic(float fElapsedTime)
 		
 	}
 	if (score >= 1) UpdateObstacle(fElapsedTime); //Set any score you want, i put 1 to test easily.
-}
-
-void controlBall(float elapsedTime)
-{
-	if (spacePressed)
-	{
-		ball.v = -g / 1.3f;
-		ball.passed = 0;
-		AudioPlayer::PlayEffect("Bound-Console-Game/GameData/Music/Jump.wav");
-	}
-	ball.y+=ball.v*elapsedTime;
-	ball.v+=g*elapsedTime;
-
-	if(leftPressed)
-		ball.x-=10*elapsedTime;
-
-	if(rightPressed)
-		ball.x+=10*elapsedTime;
 }
 
 void DrawLogic()
