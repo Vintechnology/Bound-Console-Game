@@ -505,8 +505,8 @@ void UpdateObstacle(float elapsedTime)
 	
 		switch (CaseUpdate)
 		{
-		case 1: Obstacle[Obstacleupdate].spaceX += elapsedTime*14.0f; break;
-		case 2: Obstacle[Obstacleupdate].spaceX -= elapsedTime*14.0f; break;
+		case 1: Obstacle[Obstacleupdate].spaceX += elapsedTime*10.0f; break;
+		case 2: Obstacle[Obstacleupdate].spaceX -= elapsedTime*10.0f; break;
 		}
 	
 }
