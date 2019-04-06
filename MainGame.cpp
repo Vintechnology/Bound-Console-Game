@@ -228,6 +228,7 @@ void LoadMenuData()
 
 	LoadSprite(Label_Credits, "Bound-Console-Game/GameData/Credits/Credits.dat");
 	LoadSprite(Label_Help, "Bound-Console-Game/GameData/Help/Help.dat");
+	LoadSprite(Label_Options, "Bound-Console-Game/GameData/Options/Options.dat");
 }
 
 
@@ -335,7 +336,22 @@ void LoadSkin()
 void Options()// Changed saveSkin directory to GameData/Skins 
 {
 	ScreenBuffer::fillBuffer(32, 0);
-	ScreenBuffer::drawLine(2, 40, 77, 40, 249, Color::FG_WHITE);
+	DrawSprite(Label_Options, 24, 5);
+	ScreenBuffer::drawLine(2, 15, 77, 15, 196, Color::FG_WHITE); //Volume
+	ScreenBuffer::drawString(8, 15, " VOLUME ", Color::FG_GREEN);
+	ScreenBuffer::drawString(6, 23, "[M] MUSIC:", FG_BLUE);
+	ScreenBuffer::drawLine(20, 23, 70, 23, 249, FG_YELLOW);
+	for (int i = 20; i <= 70; i += 10) ScreenBuffer::draw(i, 23, 4, FG_YELLOW);
+	ScreenBuffer::drawString(20, 21, "0", FG_YELLOW);
+	ScreenBuffer::drawString(69, 21, "100", FG_YELLOW);
+	ScreenBuffer::drawString(6, 31, "[S] SOUND:", FG_BLUE);
+	ScreenBuffer::drawLine(20, 31, 70, 31, 249, FG_YELLOW);
+	for (int i = 20; i <= 70; i += 10) ScreenBuffer::draw(i, 31, 4, FG_YELLOW);
+	ScreenBuffer::drawString(20, 29, "0", FG_YELLOW);
+	ScreenBuffer::drawString(69, 29, "100", FG_YELLOW);
+	int SorM = 1;
+	LoadSkin(); //Skin
+	ScreenBuffer::drawLine(2, 40, 77, 40, 196, Color::FG_WHITE);
 	ScreenBuffer::drawString(9, 40, " SKIN ", Color::FG_GREEN);
 	ScreenBuffer::drawRect(2, 44, 24, 69, 249, Color::FG_WHITE);
 	ScreenBuffer::drawRect(28, 44, 77, 69, 249, Color::FG_WHITE);
@@ -345,16 +361,20 @@ void Options()// Changed saveSkin directory to GameData/Skins
 	ScreenBuffer::drawString(52, 75, "[ENTER]: RETURN TO MENU", FG_DARK_CYAN);
 	ScreenBuffer::drawToConsole();
 	//Default
+	ScreenBuffer::draw((int)((float)MLevel / 100.0 * 50.0) + 20, 24, 127, FG_GREEN);
+	ScreenBuffer::draw((int)((float)SLevel / 100.0 * 50.0) + 20, 32, 127, FG_GREEN);
+	ScreenBuffer::draw(4, 23, 16, FG_GREEN);
+
 	DrawSprite(*SBall, 50, 49);
 	DrawCrop(*SLeftObs, 29, 58, 36, 0, 49, 6);
 	DrawCrop(*SRightObs, 53, 58, 0, 0, 23, 6);
 	ScreenBuffer::drawString(30, 46, SkinName, Color::FG_YELLOW);
 	ScreenBuffer::drawToConsole();
 	//
+	while (_kbhit()) _getch();
 	int Key;
 	while (true)
 	{
-		while (_kbhit()) _getch();
 		Key = _getch();
 		switch (Key)
 		{
@@ -372,8 +392,58 @@ void Options()// Changed saveSkin directory to GameData/Skins
 			SkinName = "SUPER MARIO";
 			DefaultSkin = 2;
 			break;
+		case 77:
+			if (SorM)
+			{
+				MLevel += 20;
+				if (MLevel > 100) MLevel = 100;
+				ScreenBuffer::drawLine(20, 24, 70, 24, 219, 0);
+				ScreenBuffer::draw((int)((float)MLevel / 100.0 * 50.0) + 20, 24, 127, FG_GREEN);
+				AudioPlayer::SetMusicVolume(MLevel);
+			}
+			else
+			{
+				SLevel += 20;
+				if (SLevel > 100) SLevel = 100;
+				ScreenBuffer::drawLine(20, 32, 70, 32, 219, 0);
+				ScreenBuffer::draw((int)((float)SLevel / 100.0 * 50.0) + 20, 32, 127, FG_GREEN);
+				AudioPlayer::SetSFXVolume(SLevel);
+			}
+			break;
+		case 75:
+			if (SorM)
+			{
+				MLevel -= 20;
+				if (MLevel < 0) MLevel = 0;
+				ScreenBuffer::drawLine(20, 24, 70, 24, 219, 0);
+				ScreenBuffer::draw((int)((float)MLevel / 100.0 * 50.0) + 20, 24, 127, FG_GREEN);
+				AudioPlayer::SetMusicVolume(MLevel);
+			}
+			else
+			{
+				SLevel -= 20;
+				if (SLevel < 0) SLevel = 0;
+				ScreenBuffer::drawLine(20, 32, 70, 32, 219, 0);
+				ScreenBuffer::draw((int)((float)SLevel / 100.0 * 50.0) + 20, 32, 127, FG_GREEN);
+				AudioPlayer::SetSFXVolume(SLevel);
+			}
+			break;
+		case 72:
+		case 80:
+			SorM = 1 - SorM;
+			if (SorM)
+			{
+				ScreenBuffer::drawLine(4, 23, 4, 31, 219, 0);
+				ScreenBuffer::draw(4, 23, 16, FG_GREEN);
+			}
+			else
+			{
+				ScreenBuffer::drawLine(4, 23, 4, 31, 219, 0);
+				ScreenBuffer::draw(4, 31, 16, FG_GREEN);
+			}
+			break;
 		case 13:
-			std::ofstream SavedSkin("Bound-Console-Game/GameData/Skins/SavedSkin");
+			std::ofstream SavedSkin("SavedSkin");
 			SavedSkin << DefaultSkin;
 			SavedSkin.close();
 			return;

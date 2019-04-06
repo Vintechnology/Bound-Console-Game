@@ -42,6 +42,6 @@ namespace AudioPlayer {
 	}
 	void SetSFXVolume(int volume)
 	{
-		Mix_Volume(-1, volume*128);
+		Mix_Volume(-1, volume*1.28);
 	}
 }

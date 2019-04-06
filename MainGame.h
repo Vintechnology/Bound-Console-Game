@@ -56,6 +56,8 @@ Ball ball;
 Wall Obstacle[NUMBER_OF_WALLS];
 int Obstacleupdate;
 int CaseUpdate;
+int SLevel = 100, MLevel = 100;
+
 //Mix_Chunk *intro = Mix_LoadWAV("Bound-Console-Game/Music/Intro");
 
 Sprite
@@ -81,6 +83,7 @@ Sprite Game_over;
 Sprite scoreNumbers[10];
 Sprite Label_Credits;
 Sprite Label_Help;
+Sprite Label_Options;
 
 
 // === FUNCTION DECLARE ===
