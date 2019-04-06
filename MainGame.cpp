@@ -115,11 +115,8 @@ int Menu() {//TODO: using getAsyncKeyState to handle input
 void ResetGame() {
 	// Initialize global variables
 	gameOver = false;
-	ball.x = 1 / 2.0f * GAME_WIDTH;
-	ball.y = 1 / 3.0f * GAME_HEIGHT;
+	ResetBall();
 	score = 0;
-	ball.v = 0;
-	ball.passed = 0;
 	Obstacleupdate = NUMBER_OF_WALLS;
 	CaseUpdate = 1;
 	//Section Heigth is just to know where to put the Obstacle in the first place. So if you change the Game Height, it won't appeared in weird position.
@@ -256,7 +253,7 @@ void FreeGameplayAsset() {
 
 	FreeSprite(Game_over);
 
-	FreeSprite(*SBall);
+	FreeBall(*SBall);
 	FreeSprite(*SLeftObs);
 	FreeSprite(*SRightObs);
 }
@@ -303,11 +300,11 @@ void DrawMenu()
 void LoadSkin()
 {
 	//Flappy Bird Skin
-	LoadSprite(Skin1_Ball, "Bound-Console-Game/GameData/Skins/FlappyBird/Ball.dat");
+	LoadBall(Skin1_Ball, "Bound-Console-Game/GameData/Skins/FlappyBird/Ball.dat");
 	LoadSprite(Skin1_LeftObs, "Bound-Console-Game/GameData/Skins/FlappyBird/Left_Obs.dat");
 	LoadSprite(Skin1_RightObs, "Bound-Console-Game/GameData/Skins/FlappyBird/Right_Obs.dat");
 	//Super Mario Skin
-	LoadSprite(Skin2_Ball, "Bound-Console-Game/GameData/Skins/SuperMario/Ball.dat");
+	LoadBall(Skin2_Ball, "Bound-Console-Game/GameData/Skins/SuperMario/Ball.dat");
 	LoadSprite(Skin2_LeftObs, "Bound-Console-Game/GameData/Skins/SuperMario/Left_Obs.dat");
 	LoadSprite(Skin2_RightObs, "Bound-Console-Game/GameData/Skins/SuperMario/Right_Obs.dat");
 	//Load Saved Data
@@ -372,7 +369,7 @@ void Options()// Changed saveSkin directory to GameData/Skins
 	ScreenBuffer::draw((int)((float)SLevel / 100.0 * 50.0) + 20, 32, 127, FG_GREEN);
 	ScreenBuffer::draw(8, 23, 16, FG_GREEN);
 
-	DrawSprite(*SBall, 50, 49);
+	DrawBall(*SBall, 50 - ball.x + BALL_RADIUS - 0.5f, 49 - ball.y + BALL_RADIUS - 0.5f);
 	DrawCrop(*SLeftObs, 29, 58, 36, 0, 49, 6);
 	DrawCrop(*SRightObs, 53, 58, 0, 0, 23, 6);
 	ScreenBuffer::drawString(30, 46, SkinName, Color::FG_YELLOW);
@@ -456,7 +453,7 @@ void Options()// Changed saveSkin directory to GameData/Skins
 			return;
 		}
 		ScreenBuffer::fillRect(50, 49, 54, 53, 219, 0);
-		DrawSprite(*SBall, 50, 49);
+		DrawBall(*SBall, 50 - ball.x + BALL_RADIUS - 0.5f, 49 - ball.y + BALL_RADIUS - 0.5f);
 		DrawCrop(*SLeftObs, 29, 58, 36, 0, 49, 6);
 		DrawCrop(*SRightObs, 53, 58, 0, 0, 23, 6);
 		ScreenBuffer::drawLine(29, 45, 76, 45, 219, 0);
@@ -558,7 +555,7 @@ void GameHandleInput() {
 // === PLAY LOGIC ===
 
 void GameLogic(float elapsedTime) {
-	controlBall(elapsedTime,ball);
+	ControlAndUpdateBall(elapsedTime);
 	ObstacleLogic(elapsedTime);
 	DrawLogic();
 	Collision();
@@ -706,7 +703,7 @@ void drawHUD() {
 void drawStage(int originX, int originY, int maxX, int maxY) {
 
 	//ScreenBuffer::fillRect(originX + ball.x - BALL_RADIUS + 0.5f, originY + ball.y - BALL_RADIUS + 0.5f, originX + ball.x + BALL_RADIUS + 0.5f, originY + ball.y + BALL_RADIUS + 0.5f, ' ', Color::BG_RED);
-	DrawSprite(*SBall, originX + ball.x - BALL_RADIUS + 0.5f, originY + ball.y - BALL_RADIUS + 0.5f);
+	DrawBall(*SBall,originX,originY);
 	for (int i = 0; i < NUMBER_OF_WALLS; i++) {
 		int drawSpaceX = Obstacle[i].spaceX + 0.5f;
 		int drawSpaceY = Obstacle[i].spaceY + 0.5f;

@@ -22,8 +22,6 @@ const int FONT_HEIGHT = 8;
 const int  GAME_WIDTH = 48;
 const int GAME_HEIGHT = 78;
 
-const int BALL_RADIUS = 2;
-
 const int SPACE_WIDTH = 10;
 const int WALL_HEIGHT = 7;
 
@@ -52,7 +50,6 @@ int score = 0;
 int bestScore = 0;
 int MaxScore = 9999999;
 int SectionHeigth;
-Ball ball;
 Wall Obstacle[NUMBER_OF_WALLS];
 int Obstacleupdate;
 int CaseUpdate;
