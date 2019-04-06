@@ -698,12 +698,15 @@ void drawHUD() {
 
 void drawStage(int originX, int originY, int maxX, int maxY) {
 
-	ScreenBuffer::fillRect(originX + ball.x - BALL_RADIUS + 0.5f, originY + ball.y - BALL_RADIUS + 0.5f, originX + ball.x + BALL_RADIUS + 0.5f, originY + ball.y + BALL_RADIUS + 0.5f, ' ', Color::BG_RED);
+	//ScreenBuffer::fillRect(originX + ball.x - BALL_RADIUS + 0.5f, originY + ball.y - BALL_RADIUS + 0.5f, originX + ball.x + BALL_RADIUS + 0.5f, originY + ball.y + BALL_RADIUS + 0.5f, ' ', Color::BG_RED);
+	DrawSprite(*SBall, originX + ball.x - BALL_RADIUS + 0.5f, originY + ball.y - BALL_RADIUS + 0.5f);
 	for (int i = 0; i < NUMBER_OF_WALLS; i++) {
 		int drawSpaceX = Obstacle[i].spaceX + 0.5f;
 		int drawSpaceY = Obstacle[i].spaceY + 0.5f;
-		ScreenBuffer::fillRect(originX, originY + drawSpaceY, originX + drawSpaceX - 1, originY + drawSpaceY + WALL_HEIGHT - 1, ' ', Color::BG_DARK_GREY);
-		ScreenBuffer::fillRect(originX + drawSpaceX + SPACE_WIDTH, originY + drawSpaceY, maxX, originY + drawSpaceY + WALL_HEIGHT - 1, ' ', Color::BG_DARK_GREY);
+		//ScreenBuffer::fillRect(originX, originY + drawSpaceY, originX + drawSpaceX - 1, originY + drawSpaceY + WALL_HEIGHT - 1, ' ', Color::BG_DARK_GREY);
+		//ScreenBuffer::fillRect(originX + drawSpaceX + SPACE_WIDTH, originY + drawSpaceY, maxX, originY + drawSpaceY + WALL_HEIGHT - 1, ' ', Color::BG_DARK_GREY);
+		DrawCrop(*SLeftObs, originX, originY + drawSpaceY, 50 - (originX + drawSpaceX - 1), 0, 49, 6);
+		DrawCrop(*SRightObs, originX + drawSpaceX + SPACE_WIDTH, originY + drawSpaceY, 0, 0, 49 - (originX + drawSpaceX + SPACE_WIDTH), 6);
 	}
 }
 
