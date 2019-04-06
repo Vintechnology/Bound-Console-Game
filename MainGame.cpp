@@ -542,6 +542,8 @@ void DrawLogic()
 			Obstacle[i].spaceY -= ball.y - BALL_LIMIT*1.0f;
 		ball.y = BALL_LIMIT*1.0f;
 	}
+	if (ball.x < BALL_RADIUS) ball.x = BALL_RADIUS;
+	if (ball.x >= GAME_WIDTH - BALL_RADIUS - 1) ball.x = GAME_WIDTH - BALL_RADIUS - 1;
 }
 
 void Collision()

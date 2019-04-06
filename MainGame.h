@@ -24,8 +24,8 @@ const int GAME_HEIGHT = 78;
 
 const int BALL_RADIUS = 2;
 
-const int SPACE_WIDTH = 7;
-const int WALL_HEIGHT = 4;
+const int SPACE_WIDTH = 10;
+const int WALL_HEIGHT = 7;
 
 const int NUMBER_OF_WALLS = 4;
 
