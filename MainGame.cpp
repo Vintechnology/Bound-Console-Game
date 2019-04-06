@@ -567,8 +567,7 @@ void Collision()
 		if (ball.y >= Obstacle[i].spaceY + WALL_HEIGHT && Obstacle[i].passed == 0)
 		{
 			AudioPlayer::PlayEffect("Bound-Console-Game/GameData/Music/Point.wav");
-			//score+=2*ball.passed;
-			score++;
+			score+=pow(2, ball.passed);
 			Obstacle[i].passed = 1;
 			ball.passed++;
 		}
