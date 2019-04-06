@@ -167,12 +167,12 @@ void GameOver()
 		std::string StrBest = getStrFromInt(bestScore);
 
 		DrawSprite(Game_over, 3, 32);
-		ScreenBuffer::drawString(19, 40, "SCORE", 224);
-		ScreenBuffer::drawString(26, 40, StrScore, 224);
-		ScreenBuffer::drawString(20, 42, "BEST", 224);
-		ScreenBuffer::drawString(26, 42, StrBest, 224);
-		ScreenBuffer::drawLine(4, 44, 45, 44, 223, 14); //@TranTrung: you should use Color or else I won't know what color it is. Ask me if you need to know which color do these value represent for
-		ScreenBuffer::drawString(4, 45, "         PRESS ENTER TO CONTINUE          ", 14);
+		ScreenBuffer::drawString(19, 40, "SCORE", BG_YELLOW);
+		ScreenBuffer::drawString(26, 40, StrScore, BG_YELLOW);
+		ScreenBuffer::drawString(20, 42, "BEST", BG_YELLOW);
+		ScreenBuffer::drawString(26, 42, StrBest, BG_YELLOW);
+		ScreenBuffer::drawLine(4, 44, 45, 44, 223, FG_YELLOW); //@TranTrung: you should use Color or else I won't know what color it is. Ask me if you need to know which color do these value represent for
+		ScreenBuffer::drawString(4, 45, "         PRESS ENTER TO CONTINUE          ", FG_YELLOW);
 		ScreenBuffer::drawToConsole();
 		while (_kbhit()) _getch(); //clear the input buffer
 		if (GetAsyncKeyState(VK_RETURN) & 0x8000) gameOver = 0;
@@ -350,7 +350,7 @@ void Options()// Changed saveSkin directory to GameData/Skins
 	for (int i = 20; i <= 70; i += 10) ScreenBuffer::draw(i, 23, 4, FG_YELLOW);
 	ScreenBuffer::drawString(20, 21, "0", FG_YELLOW);
 	ScreenBuffer::drawString(69, 21, "100", FG_YELLOW);
-	ScreenBuffer::drawString(10, 31, "SOUND:", FG_BLUE);
+	ScreenBuffer::drawString(10, 31, "SFX:", FG_BLUE);
 	ScreenBuffer::drawLine(20, 31, 70, 31, 249, FG_YELLOW);
 	for (int i = 20; i <= 70; i += 10) ScreenBuffer::draw(i, 31, 4, FG_YELLOW);
 	ScreenBuffer::drawString(20, 29, "0", FG_YELLOW);
@@ -465,7 +465,7 @@ void Options()// Changed saveSkin directory to GameData/Skins
 	}
 }
 
-void Credits() // @GiaVinh: don't try to use color value. I'm not a good designer
+void Credits()
 {
 	ScreenBuffer::fillBuffer(32, 0);
 	DrawSprite(Label_Credits, 25, 5);
