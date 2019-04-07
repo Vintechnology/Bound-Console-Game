@@ -3,31 +3,24 @@
 #include "SpriteRenderer/SpriteRenderer.h"
 #include <string>
 
-const int BALL_RADIUS = 2;
-const float g = 30.0f;
+namespace ControlBall {
+	struct Ball
+	{
+		float x;
+		float y;
+		float velocityY = 0.0f;
+		float velocityX = 0.0f;
+	};
 
-extern const int  GAME_WIDTH;
-extern const int GAME_HEIGHT;
+	const int BALL_RADIUS = 2;
+	const float g = 30.0f;
 
-extern int next_space;
-extern int pre_space;
-extern int spacePressed;
-extern int leftPressed;
-extern int rightPressed;
-
-struct Ball
-{
-	float x;
-	float y;
-	float v = 0.0f;
-	int passed = 0;
-};
-
-extern Ball ball;
-
-void ControlAndUpdateBall(float elapsedTime);
-void LoadBall(Sprite &ballSkin, std::string path);
-void DrawBall(Sprite &ballSkin, int originX, int originY);
-void FreeBall(Sprite &ballSkin);
-void ResetBall();
-Ball* getBall();
+	void deposeBall();
+	void Jump();
+	void GoLeft(float elapsedTime);
+	void GoRight(float elapsedTime);
+	void Fall(float elapsedTime);
+	void DrawBall(Sprite &ballSkin, int originX, int originY);
+	void ResetBall(float initX, float initY);
+	Ball* getBall();
+}
