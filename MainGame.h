@@ -60,6 +60,7 @@ int SLevel = 100, MLevel = 100;
 Sprite
 Skin1_Ball, Skin1_LeftObs, Skin1_RightObs, //Flappy Bird Skin
 Skin2_Ball, Skin2_LeftObs, Skin2_RightObs, //Super Mario Skin
+Skin3_Ball, Skin3_LeftObs, Skin3_RightObs, //Death Skin
 *SBall, *SLeftObs, *SRightObs; //Selected Skin
 
 std::string SkinName;
