@@ -253,9 +253,15 @@ void FreeGameplayAsset() {
 
 	FreeSprite(Game_over);
 
-	FreeBall(*SBall);
-	FreeSprite(*SLeftObs);
-	FreeSprite(*SRightObs);
+	FreeSprite(Skin1_Ball);
+	FreeSprite(Skin1_LeftObs);
+	FreeSprite(Skin1_RightObs);
+	FreeSprite(Skin2_Ball);
+	FreeSprite(Skin2_LeftObs);
+	FreeSprite(Skin2_RightObs);
+	FreeSprite(Skin3_Ball);
+	FreeSprite(Skin3_LeftObs);
+	FreeSprite(Skin3_RightObs);
 }
 
 // === INTRO ===
@@ -307,6 +313,10 @@ void LoadSkin()
 	LoadBall(Skin2_Ball, "Bound-Console-Game/GameData/Skins/SuperMario/Ball.dat");
 	LoadSprite(Skin2_LeftObs, "Bound-Console-Game/GameData/Skins/SuperMario/Left_Obs.dat");
 	LoadSprite(Skin2_RightObs, "Bound-Console-Game/GameData/Skins/SuperMario/Right_Obs.dat");
+	//Death Skin
+	LoadSprite(Skin3_Ball, "Bound-Console-Game/GameData/Skins/Death/Ball.dat");
+	LoadSprite(Skin3_LeftObs, "Bound-Console-Game/GameData/Skins/Death/Left_Obs.dat");
+	LoadSprite(Skin3_RightObs, "Bound-Console-Game/GameData/Skins/Death/Right_Obs.dat");
 	//Load Saved Data
 	std::ifstream SavedSkin("Bound-Console-Game/GameData/Skins/SavedSkin");
 	if (!SavedSkin.is_open())
@@ -330,6 +340,12 @@ void LoadSkin()
 		SLeftObs = &Skin2_LeftObs;
 		SRightObs = &Skin2_RightObs;
 		SkinName = "SUPER MARIO";
+		break;
+	case 3:
+		SBall = &Skin3_Ball;
+		SLeftObs = &Skin3_LeftObs;
+		SRightObs = &Skin3_RightObs;
+		SkinName = "DEATH";
 		break;
 	}
 	SavedSkin.close();
@@ -361,6 +377,7 @@ void Options()// Changed saveSkin directory to GameData/Skins
 	ScreenBuffer::drawRect(28, 44, 77, 69, 249, Color::FG_WHITE);
 	ScreenBuffer::drawString(4, 46, "[1] FLAPPY BIRD", Color::FG_YELLOW);
 	ScreenBuffer::drawString(4, 48, "[2] SUPER MARIO", Color::FG_YELLOW);
+	ScreenBuffer::drawString(4, 50, "[3] DEATH", Color::FG_YELLOW);
 	ScreenBuffer::drawString(2, 71, "PRESS NUMBER KEYS TO SELECT", FG_DARK_CYAN);
 	ScreenBuffer::drawString(52, 75, "[ENTER]: RETURN TO MENU", FG_DARK_CYAN);
 	ScreenBuffer::drawToConsole();
@@ -395,6 +412,13 @@ void Options()// Changed saveSkin directory to GameData/Skins
 			SRightObs = &Skin2_RightObs;
 			SkinName = "SUPER MARIO";
 			DefaultSkin = 2;
+			break;
+		case 0x33:
+			SBall = &Skin3_Ball;
+			SLeftObs = &Skin3_LeftObs;
+			SRightObs = &Skin3_RightObs;
+			SkinName = "DEATH";
+			DefaultSkin = 3;
 			break;
 		case 77:
 			if (SorM)
@@ -452,11 +476,10 @@ void Options()// Changed saveSkin directory to GameData/Skins
 			SavedSkin.close();
 			return;
 		}
-		ScreenBuffer::fillRect(50, 49, 54, 53, 219, 0);
-		DrawBall(*SBall, 50 - ball.x + BALL_RADIUS - 0.5f, 49 - ball.y + BALL_RADIUS - 0.5f);
+		ScreenBuffer::fillRect(29, 45, 76, 68, 219, Color::FG_BLACK);
+		DrawSprite(*SBall, 50, 49);
 		DrawCrop(*SLeftObs, 29, 58, 36, 0, 49, 6);
 		DrawCrop(*SRightObs, 53, 58, 0, 0, 23, 6);
-		ScreenBuffer::drawLine(29, 45, 76, 45, 219, 0);
 		ScreenBuffer::drawString(30, 46, SkinName, Color::FG_YELLOW);
 		ScreenBuffer::drawToConsole();
 	}
