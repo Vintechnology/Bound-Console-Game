@@ -88,6 +88,7 @@ namespace WallObstacle
 			{
 				Obstacles[i]->SpaceX = PADDING + rand() % (GAME_WIDTH - GAME_WIDTH - PADDING);
 				Obstacles[i]->SpaceY = Obstacles[lastWallOnScreenIndex]->SpaceY + wallsDistance;
+				lastWallOnScreenIndex = (lastWallOnScreenIndex + 1) % NUMBER_OF_WALLS;
 				//todo add moving mode
 			}
 
