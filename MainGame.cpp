@@ -602,8 +602,8 @@ void UpdateObstacle(float elapsedTime)
 	
 		switch (CaseUpdate)
 		{
-		case 1: Obstacle[Obstacleupdate].spaceX += elapsedTime*8.0f; break;
-		case 2: Obstacle[Obstacleupdate].spaceX -= elapsedTime*8.0f; break;
+		case 1: Obstacle[Obstacleupdate].spaceX += elapsedTime*10.0f; break;
+		case 2: Obstacle[Obstacleupdate].spaceX -= elapsedTime*10.0f; break;
 		}
 	
 }
@@ -612,7 +612,7 @@ void ObstacleLogic(float fElapsedTime)
 {
 	for (int i = 0; i < NUMBER_OF_WALLS - 1; i++)
 	{
-		Obstacle[i].spaceY -= 6.0f*fElapsedTime; //this is to keep the Obstacle (Wall) going up
+		Obstacle[i].spaceY -= 8.0f*fElapsedTime; //this is to keep the Obstacle (Wall) going up
 		
 		
 		if (Obstacle[i].spaceY <= 0) // this to make the transition of wall which touch the top border to the bottom border smother.
