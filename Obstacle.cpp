@@ -5,115 +5,116 @@
 #include "ScreenBuffer\ScreenBuffer.h"
 namespace WallObstacle
 {
-	
-	WALL* initObstacle()
-	{
-		int number_of_walls = *nUMBER_OF_WALLS;
-		WALL* obstacle = new WALL[number_of_walls];
-		return obstacle;
-	}
+
+	const int NUMBER_OF_WALLS = 4;
+	int wallsDistance;
+	int obstacleupdate;
+	int WALL_HEIGHT;
+	int SPACE_WIDTH;
+	int PADDING;
+	int GAME_WIDTH;
+	int GAME_HEIGHT;
+	Sprite* wallSkin;
+	Wall** Obstacles;
+	float wallSpeed;
+	int lastWallOnScreenIndex;
 
 
-	void SetupObstacle(const int &number_of_walls_input,int originX,int originY,int maxX,int maxY,int space_width)
+	void SetupObstacle(int gameWidth, int gameHeight,int space_width, int wallHeight,int padding, Sprite* skin)
 	{
-		CaseUpdate = 1;
-		nUMBER_OF_WALLS = &number_of_walls_input;
-		OBSTACLE = initObstacle();
-		obstacleupdate = *nUMBER_OF_WALLS;
-		sectionHeigth = ((float)(maxY - originY) / (*nUMBER_OF_WALLS + 1));
+		Obstacles = new Wall* [NUMBER_OF_WALLS];
+		obstacleupdate = NUMBER_OF_WALLS;
+		GAME_WIDTH = gameWidth;
+		GAME_HEIGHT = gameHeight;
+		SPACE_WIDTH = space_width;
+		WALL_HEIGHT = wallHeight;
+		PADDING = padding;
+
+		wallSkin = skin;
+
+		wallsDistance = ((float)(gameHeight) / (NUMBER_OF_WALLS - 1));
 		srand(time(NULL));
-		for (int i = 0; i < *nUMBER_OF_WALLS - 1; i++)
+
+		for (int i = 0; i < NUMBER_OF_WALLS; i++)
 		{
-			OBSTACLE[i].passed = 0;
-			OBSTACLE[i].SpaceX = rand() % ((maxX - originX) - space_width);
-			OBSTACLE[i].SpaceY = (i + *nUMBER_OF_WALLS - 1)*sectionHeigth;
-			while (OBSTACLE[i].SpaceX < 3)
-			{
-				OBSTACLE[i].SpaceX = rand() % ((maxX - originX) - space_width);
-			}
+			Obstacles[i]->SpaceX = padding + rand() % (gameWidth - space_width - padding);
+			Obstacles[i]->SpaceY = (i + NUMBER_OF_WALLS - 1)*wallsDistance;
+			Obstacles[i]->isMove = false;
+			Obstacles[i]->toLeft = false;
 		}
-		OBSTACLE[*nUMBER_OF_WALLS - 1].SpaceY = -15;
-		OBSTACLE[*nUMBER_OF_WALLS - 1].passed = 1;
+		lastWallOnScreenIndex = NUMBER_OF_WALLS - 1;
 	}
 	
-	float SetLevel(int n)
+	void setLevel(int level)
 	{
-		switch(n)
+		switch(level)
 		{
-		case 1: return 6.0f; break;
-		case 2: return 7.0f; break;
-		case 3: return 8.0f; break;
-		case 4: return 9.0f; break;
-		case 5: return 11.0f; break;
-		case 6: return 13.0f; break;
-		case 7: return 15.0f; break;
-		case 8: return 17.0f; break;
-		case 9: return 20.0f; break;
+		case 1: wallSpeed = 6.0f; break;
+		case 2: wallSpeed = 7.0f; break;
+		case 3: wallSpeed = 8.0f; break;
+		case 4: wallSpeed = 9.0f; break;
+		case 5: wallSpeed = 11.0f; break;
+		case 6: wallSpeed = 13.0f; break;
+		case 7: wallSpeed = 15.0f; break;
+		case 8: wallSpeed = 17.0f; break;
+		case 9: wallSpeed = 20.0f; break;
 		}
 	}
-	void UpdateObstacle(float elapsedTime, int ball_y, int originX, int originY, int maxX, int maxY, int space_width,int level)
+
+	void ObstacleLogic(float fElapsedTime)
 	{
-		if (obstacleupdate == *nUMBER_OF_WALLS || OBSTACLE[obstacleupdate].SpaceY < ball_y) //this is to make the Obstacle choosed won't be replace if we have go over it.
+		for (int i = 0; i < NUMBER_OF_WALLS - 1; i++)
 		{
-			for (int i = 0; i < *nUMBER_OF_WALLS; i++) //this is to take the name of the Obstacle that is lower than our Ball
-			{
-				if (OBSTACLE[i].SpaceY > ball_y)
-				{
-					obstacleupdate = i;
-					break;
+			if (Obstacles[i]->isMove) {
+				if (Obstacles[i]->toLeft) {
+					Obstacles[i]->SpaceX -= 6.0*fElapsedTime;
+					if (Obstacles[i]->SpaceX < PADDING) {
+						Obstacles[i]->SpaceX = PADDING;
+						Obstacles[i]->toLeft = false;
+					}
+				}
+				else {
+					Obstacles[i]->SpaceY += 6.0f*fElapsedTime;
+					if (Obstacles[i]->SpaceX > GAME_WIDTH-PADDING) {
+						Obstacles[i]->SpaceX = GAME_WIDTH-PADDING-1;
+						Obstacles[i]->toLeft = true;
+					}
 				}
 			}
-		}
-		if (OBSTACLE[obstacleupdate].SpaceX + space_width >= (maxX - originX)) CaseUpdate = 2;
-		if (OBSTACLE[obstacleupdate].SpaceX <= 0) CaseUpdate = 1;
-
-		switch (CaseUpdate)
-		{
-		case 1: OBSTACLE[obstacleupdate].SpaceX += elapsedTime*level; break;
-		case 2: OBSTACLE[obstacleupdate].SpaceX -= elapsedTime*level; break;
-		}
-
-	}
-	void ObstacleLogic(float fElapsedTime,int originX,int originY,int maxX,int maxY,int space_width)
-	{
-		for (int i = 0; i < *nUMBER_OF_WALLS - 1; i++)
-		{
-			OBSTACLE[i].SpaceY -= 8.0f*fElapsedTime; //this is to keep the Obstacle (Wall) going up
 
 
-			if (OBSTACLE[i].SpaceY <= 0) // this to make the transition of wall which touch the top border to the bottom border smother.
+			Obstacles[i]->SpaceY -= wallSpeed*fElapsedTime; //this is to keep the Obstacle (Wall) going up
+			if (Obstacles[i]->SpaceY +WALL_HEIGHT < 0) // this to make the transition of wall which touch the top border to the bottom border smother.
 			{
-				OBSTACLE[i].passed = 0; //this is to know that this wall is not passed.(after recycled)
-				OBSTACLE[*nUMBER_OF_WALLS - 1].SpaceX = OBSTACLE[i].SpaceX;
-				OBSTACLE[*nUMBER_OF_WALLS - 1].SpaceY = OBSTACLE[i].SpaceY;
-				OBSTACLE[i].SpaceX = 1 + rand() % ((maxX - originX) - space_width - 1);
-				OBSTACLE[i].SpaceY = (maxY-originY) - 1 + OBSTACLE[*nUMBER_OF_WALLS - 1].SpaceY;
+				Obstacles[i]->SpaceX = PADDING + rand() % (GAME_WIDTH - GAME_WIDTH - PADDING);
+				Obstacles[i]->SpaceY = Obstacles[lastWallOnScreenIndex]->SpaceY + wallsDistance;
+				//todo add moving mode
 			}
-			OBSTACLE[*nUMBER_OF_WALLS - 1].SpaceY -= 6.0f*fElapsedTime;
 
 		}
 		
 	}
-	void drawObstacle(int originX, int originY, int maxX, int maxY, int space_width,int wall_height)
+	void drawObstacle(int originX, int originY, int maxX, int maxY)
 	{
-		for (int i = 0; i < *nUMBER_OF_WALLS; i++) {
-			int drawSpaceX = OBSTACLE[i].SpaceX + 0.5f;
-			int drawSpaceY = OBSTACLE[i].SpaceY + 0.5f;
-			ScreenBuffer::fillRect(originX, originY + drawSpaceY, originX + drawSpaceX - 1, originY + drawSpaceY + wall_height - 1, ' ', Color::BG_DARK_GREY);
-			ScreenBuffer::fillRect(originX + drawSpaceX + sPACE_WIDTH, originY + drawSpaceY, maxX, originY + drawSpaceY + wALL_HEIGHT - 1, ' ', Color::BG_DARK_GREY);
+		for (int i = 0; i < NUMBER_OF_WALLS; i++) {
+			int drawSpaceX = Obstacles[i]->SpaceX + 0.5f;
+			int drawSpaceY = Obstacles[i]->SpaceY + 0.5f;
+			ScreenBuffer::fillRect(originX, originY + drawSpaceY, originX + drawSpaceX - 1, originY + drawSpaceY + WALL_HEIGHT - 1, ' ', Color::BG_DARK_GREY);
+			ScreenBuffer::fillRect(originX + drawSpaceX + SPACE_WIDTH, originY + drawSpaceY, maxX, originY + drawSpaceY + WALL_HEIGHT - 1, ' ', Color::BG_DARK_GREY);
 		}
 	}
-	WALL getwallIndex(int Obstacle_y)
-	{
-		for(int i = 0 ; i < *nUMBER_OF_WALLS; i++)
-		{
-			if (OBSTACLE[i].SpaceY == Obstacle_y) return OBSTACLE[i];
-		}
+
+	int getNumberOfWall() {
+		return NUMBER_OF_WALLS;
+	}
+
+	Wall* getWall(int index) {
+		return Obstacles[index];
 	}
 	
 	void deposedObstacle()
 	{
-		delete[] OBSTACLE;
+		delete[] Obstacles;
 	}
 }
 

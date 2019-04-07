@@ -4,35 +4,25 @@
 #include "ScreenBuffer\ScreenBuffer.h"
 namespace WallObstacle
 {
-	const int *nUMBER_OF_WALLS;
-	int sectionHeigth;
-	int obstacleupdate;
-	int wALL_HEIGHT;
-	int sPACE_WIDTH;
-	int gAME_WIDTH;
-	int gAME_HEIGHT;
-	int ORIGINX;
-	int ORIGINY;
-	int CaseUpdate;
-	struct WALL
+	struct Wall
 	{
 		int SpaceX;
 		int SpaceY;
-		int passed;
+		bool isMove;
+		bool toLeft;
 	};
-	WALL *OBSTACLE;
 
 	//Set up Obstacle Array
-	void SetupObstacle(const int &number_of_walls_input, int originX, int originY, int maxX, int maxY, int space_width);
+	void SetupObstacle(int gameWidth, int gameHeight, int space_width, int wallHeight, int padding, Sprite* skin=nullptr);
 	//Set level for Updated mode 
-	float SetLevel(int n);
+	void setLevel(int level);
 	//Logic
-	void UpdateObstacle(float elapsedTime, int ball_y, int originX, int originY, int maxX, int maxY, int space_width, int level);
-	void ObstacleLogic(float fElapsedTime, int originX, int originY, int maxX, int maxY, int space_width);
+	void ObstacleLogic(float fElapsedTime);
 	//Draw 
-	void drawObstacle(int originX, int originY, int maxX, int maxY, int space_width, int wall_height);
+	void drawObstacle(int originX, int originY, int maxX, int maxY);
 	//get wall index (return Obstacle[i])
-	WALL getwallIndex(int Obstacle_y);
+	int getNumberOfWall();
+	Wall* getWall(int index);
 	//Free memories
 	void deposedObstacle();
 
