@@ -1,6 +1,5 @@
 #include "ControlBall.h"
 
-
 namespace ControlBall {
 
 	Ball* ball=nullptr;
