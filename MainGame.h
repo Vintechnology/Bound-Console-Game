@@ -47,6 +47,7 @@ struct Wall {
 // === GLOBAL VARIABLES DECLARE===
 bool gameOver;
 int score = 0;
+int bonus = 0;
 int bestScore = 0;
 int MaxScore = 9999999;
 int SectionHeigth;

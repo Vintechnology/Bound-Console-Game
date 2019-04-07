@@ -33,8 +33,8 @@ void Init() {
 	LoadSprite(Logo_Outline, "Bound-Console-Game/GameData/Logo/Logo_Outline.dat");
 	LoadGameplayData();
 	LoadMenuData();
-	//
 	LoadSkin();
+
 }
 
 void Intro() {
@@ -115,7 +115,7 @@ int Menu() {//TODO: using getAsyncKeyState to handle input
 void ResetGame() {
 	// Initialize global variables
 	gameOver = false;
-	ResetBall();
+	ControlBall::ResetBall(1 / 2.0f * GAME_WIDTH, 1 / 3.0f * GAME_HEIGHT);
 	score = 0;
 	Obstacleupdate = NUMBER_OF_WALLS;
 	CaseUpdate = 1;
@@ -306,11 +306,11 @@ void DrawMenu()
 void LoadSkin()
 {
 	//Flappy Bird Skin
-	LoadBall(Skin1_Ball, "Bound-Console-Game/GameData/Skins/FlappyBird/Ball.dat");
+	LoadSprite(Skin1_Ball, "Bound-Console-Game/GameData/Skins/FlappyBird/Ball.dat");
 	LoadSprite(Skin1_LeftObs, "Bound-Console-Game/GameData/Skins/FlappyBird/Left_Obs.dat");
 	LoadSprite(Skin1_RightObs, "Bound-Console-Game/GameData/Skins/FlappyBird/Right_Obs.dat");
 	//Super Mario Skin
-	LoadBall(Skin2_Ball, "Bound-Console-Game/GameData/Skins/SuperMario/Ball.dat");
+	LoadSprite(Skin2_Ball, "Bound-Console-Game/GameData/Skins/SuperMario/Ball.dat");
 	LoadSprite(Skin2_LeftObs, "Bound-Console-Game/GameData/Skins/SuperMario/Left_Obs.dat");
 	LoadSprite(Skin2_RightObs, "Bound-Console-Game/GameData/Skins/SuperMario/Right_Obs.dat");
 	//Death Skin
@@ -386,7 +386,7 @@ void Options()// Changed saveSkin directory to GameData/Skins
 	ScreenBuffer::draw((int)((float)SLevel / 100.0 * 50.0) + 20, 32, 127, FG_GREEN);
 	ScreenBuffer::draw(8, 23, 16, FG_GREEN);
 
-	DrawBall(*SBall, 50 - ball.x + BALL_RADIUS - 0.5f, 49 - ball.y + BALL_RADIUS - 0.5f);
+	//DrawBall(*SBall, 50 - ball.x + BALL_RADIUS - 0.5f, 49 - ball.y + BALL_RADIUS - 0.5f); Don't use this
 	DrawCrop(*SLeftObs, 29, 58, 36, 0, 49, 6);
 	DrawCrop(*SRightObs, 53, 58, 0, 0, 23, 6);
 	ScreenBuffer::drawString(30, 46, SkinName, Color::FG_YELLOW);
@@ -555,21 +555,27 @@ void Help()
 	Getting ready to start the game again. Reset/ Init ball XY or score,...
 */
 // === HANDLE PLAY INPUT ===
+bool next_space = false;
+bool pre_space = false;
+bool spacePressed;
+bool leftPressed;
+bool rightPressed;
+
 void GameHandleInput() {
-	leftPressed=0;
-	rightPressed=0;
+	leftPressed=false;
+	rightPressed=false;
 
 	next_space=GetAsyncKeyState(VK_SPACE)&0x8000;
 	if(next_space&&(!pre_space))
-		spacePressed=1;	
+		spacePressed=true;	
 	if(next_space&&pre_space)
-		spacePressed=0;	
+		spacePressed=false;	
 	if(!next_space)
-		spacePressed=0;
+		spacePressed=false;
 	pre_space=next_space;
 
 	if(GetAsyncKeyState(VK_LEFT)&0x8000)
-		leftPressed=1;
+		leftPressed=true;
 
 	if(GetAsyncKeyState(VK_RIGHT)&0x8000)
 		rightPressed=1;
@@ -578,14 +584,27 @@ void GameHandleInput() {
 // === PLAY LOGIC ===
 
 void GameLogic(float elapsedTime) {
-	ControlAndUpdateBall(elapsedTime);
+	BallLogic(elapsedTime);
 	ObstacleLogic(elapsedTime);
 	DrawLogic();
 	Collision();
 }
 
+void BallLogic(float elapsedTime) {
+	if (spacePressed) {
+		ControlBall::Jump();
+		AudioPlayer::PlayEffect("Bound-Console-Game/GameData/Music/Jump.wav");
+	}
+	if (leftPressed)
+		ControlBall::GoLeft(elapsedTime);
+	if (rightPressed)
+		ControlBall::GoRight(elapsedTime);
+	ControlBall::Fall(elapsedTime);
+}
+
 void UpdateObstacle(float elapsedTime)
 {
+	/*
 	if (Obstacleupdate == NUMBER_OF_WALLS || Obstacle[Obstacleupdate].spaceY < ball.y) //this is to make the Obstacle choosed won't be replace if we have go over it.
 	{
 		for (int i = 0; i < NUMBER_OF_WALLS; i++) //this is to take the name of the Obstacle that is lower than our Ball
@@ -605,7 +624,7 @@ void UpdateObstacle(float elapsedTime)
 		case 1: Obstacle[Obstacleupdate].spaceX += elapsedTime*10.0f; break;
 		case 2: Obstacle[Obstacleupdate].spaceX -= elapsedTime*10.0f; break;
 		}
-	
+	*/
 }
 
 void ObstacleLogic(float fElapsedTime)
@@ -631,44 +650,46 @@ void ObstacleLogic(float fElapsedTime)
 
 void DrawLogic()
 {
-	if (ball.y > BALL_LIMIT*1.0f)
+	ControlBall::Ball* ball = ControlBall::getBall();
+	if (ball->y > BALL_LIMIT*1.0f)
 	{
 		for (int i = 0; i < NUMBER_OF_WALLS; i++)
 
 
-			Obstacle[i].spaceY -= ball.y - BALL_LIMIT*1.0f;
-		ball.y = BALL_LIMIT*1.0f;
+			Obstacle[i].spaceY -= ball->y - BALL_LIMIT*1.0f;
+		ball->y = BALL_LIMIT*1.0f;
 	}
-	if (ball.x < BALL_RADIUS) ball.x = BALL_RADIUS;
-	if (ball.x >= GAME_WIDTH - BALL_RADIUS - 1) ball.x = GAME_WIDTH - BALL_RADIUS - 1;
+	if (ball->x < ControlBall::BALL_RADIUS) ball->x = ControlBall::BALL_RADIUS;
+	if (ball->x >= GAME_WIDTH - ControlBall::BALL_RADIUS - 1) ball->x = GAME_WIDTH - ControlBall::BALL_RADIUS - 1;
 }
 
 void Collision()
 {
+	ControlBall::Ball* ball = ControlBall::getBall();
 	int xball, yball, xspace, yspace;
 	for (int i = 0; i < NUMBER_OF_WALLS; i++)
 	{
-		xball = ball.x + 0.5f;
-		yball = ball.y + 0.5f;
+		xball = ball->x + 0.5f;
+		yball = ball->y + 0.5f;
 		xspace = Obstacle[i].spaceX + 0.5f;
 		yspace = Obstacle[i].spaceY + 0.5f;
-		if (yspace - yball <= BALL_RADIUS && yspace - yball > -WALL_HEIGHT - BALL_RADIUS)
+		if (yspace - yball <= ControlBall::BALL_RADIUS && yspace - yball > -WALL_HEIGHT - ControlBall::BALL_RADIUS)
 		{
-			if (!(xball - xspace > BALL_RADIUS - 1 && xball - xspace < SPACE_WIDTH - BALL_RADIUS))
+			if (!(xball - xspace > ControlBall::BALL_RADIUS - 1 && xball - xspace < SPACE_WIDTH - ControlBall::BALL_RADIUS))
 				gameOver = true;
 		}
 	}
 
-	if (ball.y < 1) gameOver = true;
+	if (ball->y < 1) gameOver = true;
 
 	for (int i = 0; i < NUMBER_OF_WALLS; i++)
 	{
-		if (ball.y >= Obstacle[i].spaceY + WALL_HEIGHT && Obstacle[i].passed == 0)
+		if (ball->y >= Obstacle[i].spaceY + WALL_HEIGHT && Obstacle[i].passed == 0)
 		{
 			AudioPlayer::PlayEffect("Bound-Console-Game/GameData/Music/Point.wav");
-			score+=pow(2, ball.passed);
+			score+=pow(2, bonus);
 			Obstacle[i].passed = 1;
-			ball.passed++;
+			bonus++;
 		}
 	}
 }
@@ -726,7 +747,7 @@ void drawHUD() {
 void drawStage(int originX, int originY, int maxX, int maxY) {
 
 	//ScreenBuffer::fillRect(originX + ball.x - BALL_RADIUS + 0.5f, originY + ball.y - BALL_RADIUS + 0.5f, originX + ball.x + BALL_RADIUS + 0.5f, originY + ball.y + BALL_RADIUS + 0.5f, ' ', Color::BG_RED);
-	DrawBall(*SBall,originX,originY);
+	ControlBall::DrawBall(*SBall,originX,originY);
 	for (int i = 0; i < NUMBER_OF_WALLS; i++) {
 		int drawSpaceX = Obstacle[i].spaceX + 0.5f;
 		int drawSpaceY = Obstacle[i].spaceY + 0.5f;
