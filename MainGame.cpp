@@ -91,24 +91,27 @@ int Menu() {//TODO: using getAsyncKeyState to handle input
 		case KEY_P + 32:
 		case KEY_P:
 			AudioPlayer::PauseMusic();
+			DrawMenu();
 			return 1;
 
 		case KEY_O + 32:
 		case KEY_O:
 			Options();
+			DrawMenu();
 			break;
 
 		case KEY_C + 32:
 		case KEY_C:
 			Credits();
+			DrawMenu();
 			break;
 
 		case KEY_H + 32:
 		case KEY_H:
 			Help();
+			DrawMenu();
 			break;
 		}
-		DrawMenu();
 	}
 }
 
