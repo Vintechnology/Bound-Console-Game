@@ -605,12 +605,12 @@ void BallLogic(float elapsedTime) {
 
 void UpdateObstacle(float elapsedTime)
 {
-	/*
-	if (Obstacleupdate == NUMBER_OF_WALLS || Obstacle[Obstacleupdate].spaceY < ball.y) //this is to make the Obstacle choosed won't be replace if we have go over it.
+	
+	if (Obstacleupdate == NUMBER_OF_WALLS || Obstacle[Obstacleupdate].spaceY < ControlBall::getBall().y) //this is to make the Obstacle choosed won't be replace if we have go over it.
 	{
 		for (int i = 0; i < NUMBER_OF_WALLS; i++) //this is to take the name of the Obstacle that is lower than our Ball
 		{
-			if (Obstacle[i].spaceY > ball.y)
+			if (Obstacle[i].spaceY > ControlBall::getBall().y)
 			{
 				Obstacleupdate = i;
 				break;
@@ -620,12 +620,16 @@ void UpdateObstacle(float elapsedTime)
 	if (Obstacle[Obstacleupdate].spaceX + SPACE_WIDTH  >= GAME_WIDTH) CaseUpdate = 2; 
 	if (Obstacle[Obstacleupdate].spaceX <= 0) CaseUpdate = 1;
 	
-		switch (CaseUpdate)
-		{
-		case 1: Obstacle[Obstacleupdate].spaceX += elapsedTime*10.0f; break;
-		case 2: Obstacle[Obstacleupdate].spaceX -= elapsedTime*10.0f; break;
-		}
-	*/
+	switch (CaseUpdate)
+	{
+		case 1: 
+			Obstacle[Obstacleupdate].spaceX += elapsedTime*5.0f;
+			break;
+		case 2: 
+			Obstacle[Obstacleupdate].spaceX -= elapsedTime*5.0f; 
+			break;
+	}
+	
 }
 
 void ObstacleLogic(float fElapsedTime)
@@ -646,7 +650,8 @@ void ObstacleLogic(float fElapsedTime)
 		Obstacle[NUMBER_OF_WALLS - 1].spaceY -= 6.0f*fElapsedTime;
 		
 	}
-	if (score >= 20) UpdateObstacle(fElapsedTime); //Set any score you want, i put 1 to test easily.
+	if (score >= MAKE_IT_HARDER && movingObstacle) 
+		UpdateObstacle(fElapsedTime); //Set any score you want, i put 1 to test easily.
 }
 
 void DrawLogic()
@@ -688,6 +693,10 @@ void Collision()
 			AudioPlayer::PlayEffect("Bound-Console-Game/GameData/Music/Point.wav");
 			score+=pow(2, bonus);
 			Obstacle[i].passed = 1;
+			if (score >= MAKE_IT_HARDER) {
+				movingObstacle = rand() % 2;
+				CaseUpdate = 1 + rand() % 2;
+			}
 			bonus++;
 		}
 	}
