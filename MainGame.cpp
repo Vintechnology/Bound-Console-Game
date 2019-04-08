@@ -116,7 +116,7 @@ void ResetGame() {
 	// Initialize global variables
 	gameOver = false;
 	ControlBall::ResetBall(1 / 2.0f * GAME_WIDTH, 1 / 3.0f * GAME_HEIGHT);
-	score = 0;
+	score = 0; bonus = 0;
 	Obstacleupdate = NUMBER_OF_WALLS;
 	CaseUpdate = 1;
 	//Section Heigth is just to know where to put the Obstacle in the first place. So if you change the Game Height, it won't appeared in weird position.
