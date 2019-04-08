@@ -386,7 +386,7 @@ void Options()// Changed saveSkin directory to GameData/Skins
 	ScreenBuffer::draw((int)((float)SLevel / 100.0 * 50.0) + 20, 32, 127, FG_GREEN);
 	ScreenBuffer::draw(8, 23, 16, FG_GREEN);
 
-	//DrawBall(*SBall, 50 - ball.x + BALL_RADIUS - 0.5f, 49 - ball.y + BALL_RADIUS - 0.5f); Don't use this
+	DrawSprite(*SBall, 50, 49);
 	DrawCrop(*SLeftObs, 29, 58, 36, 0, 49, 6);
 	DrawCrop(*SRightObs, 53, 58, 0, 0, 23, 6);
 	ScreenBuffer::drawString(30, 46, SkinName, Color::FG_YELLOW);
