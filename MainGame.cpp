@@ -594,6 +594,7 @@ void BallLogic(float elapsedTime) {
 	if (spacePressed) {
 		ControlBall::Jump();
 		AudioPlayer::PlayEffect("Bound-Console-Game/GameData/Music/Jump.wav");
+		bonus = 0;
 	}
 	if (leftPressed)
 		ControlBall::GoLeft(elapsedTime);
@@ -650,27 +651,25 @@ void ObstacleLogic(float fElapsedTime)
 
 void DrawLogic()
 {
-	ControlBall::Ball* ball = ControlBall::getBall();
-	if (ball->y > BALL_LIMIT*1.0f)
+	ControlBall::Ball& ball = ControlBall::getBall();
+	if (ball.y > BALL_LIMIT*1.0f)
 	{
 		for (int i = 0; i < NUMBER_OF_WALLS; i++)
-
-
-			Obstacle[i].spaceY -= ball->y - BALL_LIMIT*1.0f;
-		ball->y = BALL_LIMIT*1.0f;
+			Obstacle[i].spaceY -= ball.y - BALL_LIMIT*1.0f;
+		ball.y = BALL_LIMIT*1.0f;
 	}
-	if (ball->x < ControlBall::BALL_RADIUS) ball->x = ControlBall::BALL_RADIUS;
-	if (ball->x >= GAME_WIDTH - ControlBall::BALL_RADIUS - 1) ball->x = GAME_WIDTH - ControlBall::BALL_RADIUS - 1;
+	if (ball.x < ControlBall::BALL_RADIUS) ball.x = ControlBall::BALL_RADIUS;
+	if (ball.x >= GAME_WIDTH - ControlBall::BALL_RADIUS - 1) ball.x = GAME_WIDTH - ControlBall::BALL_RADIUS - 1;
 }
 
 void Collision()
 {
-	ControlBall::Ball* ball = ControlBall::getBall();
+	ControlBall::Ball ball = ControlBall::getBall();
 	int xball, yball, xspace, yspace;
 	for (int i = 0; i < NUMBER_OF_WALLS; i++)
 	{
-		xball = ball->x + 0.5f;
-		yball = ball->y + 0.5f;
+		xball = ball.x + 0.5f;
+		yball = ball.y + 0.5f;
 		xspace = Obstacle[i].spaceX + 0.5f;
 		yspace = Obstacle[i].spaceY + 0.5f;
 		if (yspace - yball <= ControlBall::BALL_RADIUS && yspace - yball > -WALL_HEIGHT - ControlBall::BALL_RADIUS)
@@ -680,11 +679,11 @@ void Collision()
 		}
 	}
 
-	if (ball->y < 1) gameOver = true;
+	if (ball.y < 0) gameOver = true;
 
 	for (int i = 0; i < NUMBER_OF_WALLS; i++)
 	{
-		if (ball->y >= Obstacle[i].spaceY + WALL_HEIGHT && Obstacle[i].passed == 0)
+		if (ball.y >= Obstacle[i].spaceY + WALL_HEIGHT && Obstacle[i].passed == 0)
 		{
 			AudioPlayer::PlayEffect("Bound-Console-Game/GameData/Music/Point.wav");
 			score+=pow(2, bonus);

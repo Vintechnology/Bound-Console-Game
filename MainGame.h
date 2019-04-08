@@ -117,6 +117,7 @@ void Help();
 
 
 void ObstacleLogic(float fElapsedTime);
+void BallLogic(float elapsedTime);
 void Collision();
 void DrawLogic();
 void DrawScore(int temp, int x, int y);
