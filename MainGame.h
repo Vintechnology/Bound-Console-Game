@@ -28,6 +28,7 @@ const int WALL_HEIGHT = 7;
 const int NUMBER_OF_WALLS = 4;
 
 const int BALL_LIMIT = 50;
+const int MAKE_IT_HARDER = 40;
 
 const int KEY_P = 0x50;
 const int KEY_O = 0x4F;
@@ -54,6 +55,7 @@ int SectionHeigth;
 Wall Obstacle[NUMBER_OF_WALLS];
 int Obstacleupdate;
 int CaseUpdate;
+bool movingObstacle = false;
 int SLevel = 100, MLevel = 100;
 
 //Mix_Chunk *intro = Mix_LoadWAV("Bound-Console-Game/Music/Intro");
