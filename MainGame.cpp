@@ -471,7 +471,7 @@ void Options()// Changed saveSkin directory to GameData/Skins
 			}
 			break;
 		case 13:
-			std::ofstream SavedSkin("SavedSkin");
+			std::ofstream SavedSkin("GameData/Skins/SavedSkin");
 			SavedSkin << DefaultSkin;
 			SavedSkin.close();
 			return;
@@ -651,13 +651,8 @@ void ObstacleLogic(float fElapsedTime)
 		Obstacle[NUMBER_OF_WALLS - 1].spaceY -= 6.0f*fElapsedTime;
 		
 	}
-<<<<<<< HEAD
-	if (score >= 20) UpdateObstacle(fElapsedTime); //Set any score you want, i put 1 to test easily.
-
-=======
 	if (score >= MAKE_IT_HARDER && movingObstacle) 
 		UpdateObstacle(fElapsedTime); //Set any score you want, i put 1 to test easily.
->>>>>>> 3bae4418aabbef8b0b6ab2a109d9cd0689c59dec
 }
 
 void DrawLogic()
