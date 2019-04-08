@@ -607,7 +607,7 @@ void BallLogic(float elapsedTime) {
 void UpdateObstacle(float elapsedTime)
 {
 	
-	if (Obstacleupdate == NUMBER_OF_WALLS || Obstacle[Obstacleupdate].spaceY < ControlBall::getBall().y) //this is to make the Obstacle choosed won't be replace if we have go over it.
+	if (Obstacleupdate == NUMBER_OF_WALLS || Obstacle[Obstacleupdate].spaceY + WALL_HEIGHT <= ControlBall::getBall().y) //this is to make the Obstacle choosed won't be replace if we have go over it.
 	{
 		for (int i = 0; i < NUMBER_OF_WALLS; i++) //this is to take the name of the Obstacle that is lower than our Ball
 		{
