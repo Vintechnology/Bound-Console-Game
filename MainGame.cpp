@@ -1,6 +1,7 @@
 ﻿#include <iostream>
 #include <conio.h>
 #include <chrono>
+#include <string>
 #include <fstream>
 #include <SDL_mixer.h>
 #include <SDL.h>
@@ -100,7 +101,7 @@ int main(int argc, char* argv[]) {
 			onGameUpdate(fElapsedTime);
 			ScreenBuffer::drawToConsole();
 		}
-		AudioPlayer::PlayEffect("Bound-Console-Game/GameData/Music/Die.wav");
+		AudioPlayer::PlayEffect("GameData/Music/Die.wav");
 		GameOver();
 	}
 	Depose();
@@ -128,7 +129,7 @@ void Init() {
 	// TODO: Load game asset
 	// Load Intro and Menu
 	AudioPlayer::initPlayer();
-	LoadSprite(Logo_Outline, "Bound-Console-Game/GameData/Logo/Logo_Outline.dat");
+	LoadSprite(Logo_Outline, "GameData/Logo/Logo_Outline.dat");
 	LoadMenuData();
 }
 
@@ -152,13 +153,13 @@ void Depose() {
 
 void Intro() {
 	Sprite Black;
-	LoadSprite(Black, "Bound-Console-Game/GameData/Logo/Black.dat");
+	LoadSprite(Black, "GameData/Logo/Black.dat");
 	Sprite Logo_Inner;
-	LoadSprite(Logo_Inner, "Bound-Console-Game/GameData/Logo/Logo_Inner.dat");
+	LoadSprite(Logo_Inner, "GameData/Logo/Logo_Inner.dat");
 	Sleep(500);
 	DrawSprite(Logo_Inner, 11, 35);
 	ScreenBuffer::drawToConsole();
-	AudioPlayer::PlayEffect("Bound-Console-Game/GameData/Music/Intro.wav");
+	AudioPlayer::PlayEffect("GameData/Music/Intro.wav");
 	Sleep(500);
 	for (int i = 0; i < 6; i++)
 	{
@@ -191,11 +192,11 @@ void Intro() {
 
 void LoadMenuData()
 {
-	LoadSprite(Menu_Play, "Bound-Console-Game/GameData/Menu/Menu_Play.dat");
-	LoadSprite(Menu_Options, "Bound-Console-Game/GameData/Menu/Menu_Options.dat");
-	LoadSprite(Menu_Credits, "Bound-Console-Game/GameData/Menu/Menu_Credits.dat");
-	LoadSprite(Menu_Help, "Bound-Console-Game/GameData/Menu/Menu_Help.dat");
-	LoadSprite(Menu_Exit, "Bound-Console-Game/GameData/Menu/Menu_Exit.dat");
+	LoadSprite(Menu_Play, "GameData/Menu/Menu_Play.dat");
+	LoadSprite(Menu_Options, "GameData/Menu/Menu_Options.dat");
+	LoadSprite(Menu_Credits, "GameData/Menu/Menu_Credits.dat");
+	LoadSprite(Menu_Help, "GameData/Menu/Menu_Help.dat");
+	LoadSprite(Menu_Exit, "GameData/Menu/Menu_Exit.dat");
 }
 
 void DrawMenu()
@@ -238,7 +239,7 @@ void Credits() // @GiaVinh: don't try to use color value. I'm not a good designe
 {	
 	ScreenBuffer::fillBuffer(32, 0);
 	Sprite Credits;
-	LoadSprite(Credits, "Bound-Console-Game/GameData/Credits/Credits.dat");
+	LoadSprite(Credits, "GameData/Credits/Credits.dat");
 	DrawSprite(Credits, 25, 5);
 	ScreenBuffer::drawString(10, 12, "____________________________________________________________");
 	ScreenBuffer::drawString(16, 14, "This game is a school project created by a group", 10);
@@ -268,7 +269,7 @@ void Help()
 {
 	ScreenBuffer::fillBuffer(32, 0);
 	Sprite Help;
-	LoadSprite(Help, "Bound-Console-Game/GameData/Help/Help.dat");
+	LoadSprite(Help, "GameData/Help/Help.dat");
 	DrawSprite(Help, 32, 5);
 	FreeSprite(Help);
 	ScreenBuffer::drawString(10, 12, "____________________________________________________________");
@@ -277,7 +278,7 @@ void Help()
 }
 
 int Menu() {
-	AudioPlayer::PlayBackgroundMusic("Bound-Console-Game/GameData/Music/Menu.wav");
+	AudioPlayer::PlayBackgroundMusic("GameData/Music/Menu.wav");
 	DrawMenu();
 	int Key;
 	while (true)
@@ -415,7 +416,7 @@ void controlBall(float elapsedTime)
 	{
 		ball.v = -g / 1.3f;
 		ball.passed = 0;
-		AudioPlayer::PlayEffect("Bound-Console-Game/GameData/Music/Jump.wav");
+		AudioPlayer::PlayEffect("GameData/Music/Jump.wav");
 	}
 	ball.y+=ball.v*elapsedTime;
 	ball.v+=g*elapsedTime;
@@ -456,7 +457,7 @@ void Collision()
 	{
 		if (ball.y >= Obstacle[i].spaceY + WALL_HEIGHT && Obstacle[i].passed == 0)
 		{
-			AudioPlayer::PlayEffect("Bound-Console-Game/GameData/Music/Point.wav");
+			AudioPlayer::PlayEffect("GameData/Music/Point.wav");
 			score+=pow(2.0, ball.passed);
 			Obstacle[i].passed = 1;
 			ball.passed++;
@@ -514,16 +515,16 @@ void onGameUpdate(float elapsedTime) {
 void DrawScore(int temp,int x,int y)
 {
 	Sprite numb[10];
-	LoadSprite(numb[0], "Bound-Console-Game/GameData/Numbers/0.dat");
-	LoadSprite(numb[1], "Bound-Console-Game/GameData/Numbers/1.dat");
-	LoadSprite(numb[2], "Bound-Console-Game/GameData/Numbers/2.dat");
-	LoadSprite(numb[3], "Bound-Console-Game/GameData/Numbers/3.dat");
-	LoadSprite(numb[4], "Bound-Console-Game/GameData/Numbers/4.dat");
-	LoadSprite(numb[5], "Bound-Console-Game/GameData/Numbers/5.dat");
-	LoadSprite(numb[6], "Bound-Console-Game/GameData/Numbers/6.dat");
-	LoadSprite(numb[7], "Bound-Console-Game/GameData/Numbers/7.dat");
-	LoadSprite(numb[8], "Bound-Console-Game/GameData/Numbers/8.dat");
-	LoadSprite(numb[9], "Bound-Console-Game/GameData/Numbers/9.dat");
+	LoadSprite(numb[0], "GameData/Numbers/0.dat");
+	LoadSprite(numb[1], "GameData/Numbers/1.dat");
+	LoadSprite(numb[2], "GameData/Numbers/2.dat");
+	LoadSprite(numb[3], "GameData/Numbers/3.dat");
+	LoadSprite(numb[4], "GameData/Numbers/4.dat");
+	LoadSprite(numb[5], "GameData/Numbers/5.dat");
+	LoadSprite(numb[6], "GameData/Numbers/6.dat");
+	LoadSprite(numb[7], "GameData/Numbers/7.dat");
+	LoadSprite(numb[8], "GameData/Numbers/8.dat");
+	LoadSprite(numb[9], "GameData/Numbers/9.dat");
 
 	switch (temp)
 	{
@@ -650,7 +651,7 @@ void GameOver()
 		}
 		
 		Sprite Game_over;
-		LoadSprite(Game_over, "Bound-Console-Game/GameData/GameOver/GameOver.dat");
+		LoadSprite(Game_over, "GameData/GameOver/GameOver.dat");
 		DrawSprite(Game_over, 3, 32);
 		FreeSprite(Game_over);
 		ScreenBuffer::drawString(19, 40, "SCORE", 224);
