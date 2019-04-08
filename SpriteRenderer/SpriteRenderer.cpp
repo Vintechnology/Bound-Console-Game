@@ -26,6 +26,14 @@ void DrawSprite(Sprite & sprite, int x, int y)
 			ScreenBuffer::draw(i + x, j + y, sprite.C[j*sprite.W + i].Char.AsciiChar, sprite.C[j*sprite.W + i].Attributes);
 }
 
+void DrawCrop(Sprite &sprite, int x, int y, int x1, int y1, int x2, int y2)
+{
+	for (int i = x1; i <= x2; i++)
+		for (int j = y1; j <= y2; j++)
+			if (sprite.C[j*sprite.W + i].Char.AsciiChar != 0)
+				ScreenBuffer::draw(i + x - x1, j + y - y1, sprite.C[j*sprite.W + i].Char.AsciiChar, sprite.C[j*sprite.W + i].Attributes);
+}
+
 void FreeSprite(Sprite &sprite)
 {
 	delete[] sprite.C;
