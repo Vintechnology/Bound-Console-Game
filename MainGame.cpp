@@ -72,7 +72,7 @@ void Intro() {
 	FreeSprite(Black);
 }
 
-int Menu() {//TODO: using getAsyncKeyState to handle input
+int Menu() {
 	AudioPlayer::PlayBackgroundMusic("Bound-Console-Game/GameData/Music/Menu.wav");
 	DrawMenu();
 	int Key;
@@ -96,19 +96,22 @@ int Menu() {//TODO: using getAsyncKeyState to handle input
 		case KEY_O + 32:
 		case KEY_O:
 			Options();
+			DrawMenu();
 			break;
 
 		case KEY_C + 32:
 		case KEY_C:
 			Credits();
+			DrawMenu();
 			break;
 
 		case KEY_H + 32:
 		case KEY_H:
 			Help();
+			DrawMenu();
 			break;
 		}
-		DrawMenu();
+		
 	}
 }
 
@@ -119,14 +122,17 @@ void ResetGame() {
 	score = 0; bonus = 0;
 	Obstacleupdate = NUMBER_OF_WALLS;
 	CaseUpdate = 1;
-	//Section Heigth is just to know where to put the Obstacle in the first place. So if you change the Game Height, it won't appeared in weird position.
-	SectionHeigth = ((float)GAME_HEIGHT / NUMBER_OF_WALLS + 1) + 5;
+
+	// Reset Obstacles
+
+	//Section Height is just to know where to put the Obstacle in the first place. So if you change the Game Height, it won't appeared in weird position.
+	SectionHeight = ((float)GAME_HEIGHT / NUMBER_OF_WALLS + 1) + 5;
 	srand(time(NULL));
 	for (int i = 0; i < NUMBER_OF_WALLS - 1; i++)
 	{
 		Obstacle[i].passed = 0;
 		Obstacle[i].spaceX = rand() % (GAME_WIDTH - SPACE_WIDTH);
-		Obstacle[i].spaceY = (i + NUMBER_OF_WALLS - 1)*SectionHeigth;
+		Obstacle[i].spaceY = (i + NUMBER_OF_WALLS - 1)*SectionHeight;
 		while (Obstacle[i].spaceX < 3)
 		{
 			Obstacle[i].spaceX = rand() % (GAME_WIDTH - SPACE_WIDTH);
@@ -168,7 +174,7 @@ void GameOver()
 		ScreenBuffer::drawString(26, 40, StrScore, BG_YELLOW);
 		ScreenBuffer::drawString(20, 42, "BEST", BG_YELLOW);
 		ScreenBuffer::drawString(26, 42, StrBest, BG_YELLOW);
-		ScreenBuffer::drawLine(4, 44, 45, 44, 223, FG_YELLOW); //@TranTrung: you should use Color or else I won't know what color it is. Ask me if you need to know which color do these value represent for
+		ScreenBuffer::drawLine(4, 44, 45, 44, 223, FG_YELLOW);
 		ScreenBuffer::drawString(4, 45, "         PRESS ENTER TO CONTINUE          ", FG_YELLOW);
 		ScreenBuffer::drawToConsole();
 		while (_kbhit()) _getch(); //clear the input buffer
@@ -178,18 +184,11 @@ void GameOver()
 
 void Depose() {
 	ScreenBuffer::deposeBuffer();
-	// TODO: Free AudioPLayer
-	// TODO: Free game asset
-	// Free Menu assets
 	FreeGameplayAsset();
 	FreeMenuAsset();
 }
 
 // -------- FUNCTIONS FOR STARTING STATE --------
-
-/*
-	Initialize global variables, loading game assets, records or something that will need to init once in program
-*/
 
 
 
@@ -264,8 +263,6 @@ void FreeGameplayAsset() {
 	FreeSprite(Skin3_RightObs);
 }
 
-// === INTRO ===
-
 // === MENU ===
 std::string getStrFromInt(int number) {
 	std::string Score = "";
@@ -295,7 +292,7 @@ void DrawMenu()
 	DrawSprite(Menu_Exit, 20, 66);
 	ScreenBuffer::drawString(35, 25, "BEST: ", 10);
 
-	//Get Best Score from file txt to show in Menu
+	//Get Best Score from file bestScore to show in Menu
 	ReadBestScore();
 
 	std::string Score = getStrFromInt(bestScore);
@@ -369,7 +366,7 @@ void Options()// Changed saveSkin directory to GameData/Skins
 	ScreenBuffer::drawString(20, 29, "0", FG_YELLOW);
 	ScreenBuffer::drawString(69, 29, "100", FG_YELLOW);
 	ScreenBuffer::drawString(2, 37, "USE ARROW KEYS TO ADJUST", FG_DARK_CYAN);
-	int SorM = 1;
+	int SorM = 1; // User is choosing sound or music
 	//Skin
 	ScreenBuffer::drawLine(2, 40, 77, 40, 196, Color::FG_WHITE);
 	ScreenBuffer::drawString(9, 40, " SKIN ", Color::FG_GREEN);
@@ -399,28 +396,28 @@ void Options()// Changed saveSkin directory to GameData/Skins
 		Key = _getch();
 		switch (Key)
 		{
-		case 0x31:
+		case 0x31:// User press button 1
 			SBall = &Skin1_Ball;
 			SLeftObs = &Skin1_LeftObs;
 			SRightObs = &Skin1_RightObs;
 			SkinName = "FLAPPY BIRD";
 			DefaultSkin = 1;
 			break;
-		case 0x32:
+		case 0x32:// User press button 2
 			SBall = &Skin2_Ball;
 			SLeftObs = &Skin2_LeftObs;
 			SRightObs = &Skin2_RightObs;
 			SkinName = "SUPER MARIO";
 			DefaultSkin = 2;
 			break;
-		case 0x33:
+		case 0x33:// User press button 3 
 			SBall = &Skin3_Ball;
 			SLeftObs = &Skin3_LeftObs;
 			SRightObs = &Skin3_RightObs;
 			SkinName = "DEATH";
 			DefaultSkin = 3;
 			break;
-		case 77:
+		case 77: // User press Right arrow key
 			if (SorM)
 			{
 				MLevel += 20;
@@ -438,7 +435,7 @@ void Options()// Changed saveSkin directory to GameData/Skins
 				AudioPlayer::SetSFXVolume(SLevel);
 			}
 			break;
-		case 75:
+		case 75:// User press Left arrow key
 			if (SorM)
 			{
 				MLevel -= 20;
@@ -457,7 +454,7 @@ void Options()// Changed saveSkin directory to GameData/Skins
 			}
 			break;
 		case 72:
-		case 80:
+		case 80: // user press Up/Down arrow key
 			SorM = 1 - SorM;
 			if (SorM)
 			{
@@ -651,7 +648,7 @@ void ObstacleLogic(float fElapsedTime)
 		
 	}
 	if (score >= MAKE_IT_HARDER && movingObstacle) 
-		UpdateObstacle(fElapsedTime); //Set any score you want, i put 1 to test easily.
+		UpdateObstacle(fElapsedTime);
 }
 
 void DrawLogic()
@@ -711,7 +708,6 @@ void Collision()
 */
 
 void onGameDraw() {
-	// TODO: Add a padding variables. Too many mysterious numbers
 
 	//Clear the whole screen
 	ScreenBuffer::fillBuffer(' ');
@@ -727,7 +723,6 @@ void drawHUD() {
 
 	ScreenBuffer::drawLine(52, 1, 77, 1, 4, Color::FG_GREEN);
 	ScreenBuffer::drawString(61, 1, " SCORE ", Color::FG_GREEN);
-	//ScreenBuffer::drawString(52, 12, "BONUS +2", 14);
 	std::string bestScoreStr = getStrFromInt(bestScore);
 	ScreenBuffer::drawString(52, 15, "BEST: "+bestScoreStr, 10);
 
@@ -754,13 +749,10 @@ void drawHUD() {
 
 void drawStage(int originX, int originY, int maxX, int maxY) {
 
-	//ScreenBuffer::fillRect(originX + ball.x - BALL_RADIUS + 0.5f, originY + ball.y - BALL_RADIUS + 0.5f, originX + ball.x + BALL_RADIUS + 0.5f, originY + ball.y + BALL_RADIUS + 0.5f, ' ', Color::BG_RED);
 	ControlBall::DrawBall(*SBall,originX,originY);
 	for (int i = 0; i < NUMBER_OF_WALLS; i++) {
 		int drawSpaceX = Obstacle[i].spaceX + 0.5f;
 		int drawSpaceY = Obstacle[i].spaceY + 0.5f;
-		//ScreenBuffer::fillRect(originX, originY + drawSpaceY, originX + drawSpaceX - 1, originY + drawSpaceY + WALL_HEIGHT - 1, ' ', Color::BG_DARK_GREY);
-		//ScreenBuffer::fillRect(originX + drawSpaceX + SPACE_WIDTH, originY + drawSpaceY, maxX, originY + drawSpaceY + WALL_HEIGHT - 1, ' ', Color::BG_DARK_GREY);
 		DrawCrop(*SLeftObs, originX, originY + drawSpaceY, 50 - (originX + drawSpaceX - 1), 0, 49, 6);
 		DrawCrop(*SRightObs, originX + drawSpaceX + SPACE_WIDTH, originY + drawSpaceY, 0, 0, 49 - (originX + drawSpaceX + SPACE_WIDTH), 6);
 	}

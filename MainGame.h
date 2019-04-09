@@ -51,14 +51,12 @@ int score = 0;
 int bonus = 0;
 int bestScore = 0;
 int MaxScore = 9999999;
-int SectionHeigth;
+int SectionHeight;
 Wall Obstacle[NUMBER_OF_WALLS];
 int Obstacleupdate;
 int CaseUpdate;
 bool movingObstacle = false;
-int SLevel = 100, MLevel = 100;
-
-//Mix_Chunk *intro = Mix_LoadWAV("Bound-Console-Game/Music/Intro");
+int SLevel = 100, MLevel = 100; // Sound Level
 
 Sprite
 Skin1_Ball, Skin1_LeftObs, Skin1_RightObs, //Flappy Bird Skin
