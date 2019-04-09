@@ -184,6 +184,7 @@ void GameOver()
 
 void Depose() {
 	ScreenBuffer::deposeBuffer();
+	AudioPlayer::CleanUp();
 	FreeGameplayAsset();
 	FreeMenuAsset();
 }
